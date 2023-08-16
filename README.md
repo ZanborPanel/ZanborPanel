@@ -60,9 +60,8 @@ sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/
 ## حمایت
 - Bank Meli: `6037998195739130`
 - Tron (TRX): `TAwNcAYrHp2SxhchywA6NhUEF4aVwJHufD`
-- Tether (BEP20): `0x36c5109885b59Ddd0cA4ea497765d326eb48396F`
-- Tether (Trc20): `TAwNcAYrHp2SxhchywA6NhUEF4aVwJHufD`
-- Btc: `bc1qccunjllf2guca7dhwyw2x3u80yh4k0hg88yvpk`
+- ETH, BNB, MATIC network (ERC20, BEP20): `0x36c5109885b59Ddd0cA4ea497765d326eb48396F`
+- Bitcoin network: `bc1qccunjllf2guca7dhwyw2x3u80yh4k0hg88yvpk`
 
 ## کانال و گروه زنبور پنل
 **حتما به کانال و گروه زنبور پنل بپیوندید.**
