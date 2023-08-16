@@ -1,5 +1,3 @@
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
 ##آموزش راه اندازی و نصب ربات روی هاست ( سیپنل )
 - وارد ربات فات فادر [@BotFather](https://t.me/BotFather) شوید و با دستور `/new_bot` یک ربات جدید ساخته و توکن را دریافت کنید.
 - وارد هاست خود شوید و به قسمت [ `MySQL® Database Wizard` ] وارد شوید و یک دیتابیس جدید ساخته و همه دسترسی های لازمه را فعال کنید.
