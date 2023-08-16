@@ -59,7 +59,7 @@ sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/
 - Btc: `bc1qccunjllf2guca7dhwyw2x3u80yh4k0hg88yvpk`
 
 ## کانال و گروه زنبور پنل
-**حتما به کانال و گروه زنبور پنل بپیوندید.
+**حتما به کانال و گروه زنبور پنل بپیوندید.**
 - Channel: [@ZanborPanel](https://t.me/ZanborPanel)
 - Group: [@ZanborPanelGap](https://t.me/ZanborPanelGap)
 - Bot: [@ZanborPanelBot](https://t.me/ZanborPanelBot)
