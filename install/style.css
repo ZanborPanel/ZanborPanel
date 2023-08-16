@@ -1,0 +1,71 @@
+@font-face {
+    font-family: IRANSansX;
+    font-style: normal;
+    font-weight: 400;
+    src: url('fonts/iransansx/woff/IRANSansX-Regular.woff') format('woff'),
+        url('fonts/iransansx/woff2/IRANSansX-Regular.woff2') format('woff2');
+}
+
+* {
+    font-family: "IRANSansX", serif;
+    direction: rtl;
+}
+
+body {
+    background-color: rgb(244, 245, 247);
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.install-cart>h2 {
+    text-align: center;
+}
+
+.install-cart {
+    position: relative;
+    border: 2px solid black;
+    border-radius: 13px;
+    width: 50%;
+    margin: 40px auto;
+}
+
+input {
+    border: 2px solid rgba(144, 144, 144, 0.50);
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 15px;
+    margin-right: 20px;
+    width: 89%;
+}
+
+ul>button {
+    border: 2px solid rgba(144, 144, 144, 0.50);
+    background-color: rgb(231, 236, 242);
+    border-radius: 6px;
+    margin-right: 27px;
+    position: relative;
+    display: inline-block;
+    padding: 10px;
+    color: black;
+    width: 40%;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+form>button {
+    border: 2px solid rgba(144, 144, 144, 0.50);
+    border-radius: 6px;
+    color: black;
+    font-size: 18px;
+    font-weight: 800;
+    width: 92%;
+    padding: 7px;
+    margin-top: 15px;
+    margin-right: 22px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
