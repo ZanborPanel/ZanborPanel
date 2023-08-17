@@ -372,7 +372,7 @@ if (!isset($sql->connect_error)) {
 
 # ----------------- [ <- keyboard -> ] ----------------- #
 
-if ($from_id == $config['dev'] or in_array($from_id, $sql->query("SELECT * FROM `admins`")->fetch_assoc() ?? [])) {
+if ($from_id == $config['dev']) {
     $start_key = json_encode(['keyboard' => [
         [['text' => '🔧 مدیریت']],
         [['text' => '🛍 سرویس های من'], ['text' => '🛒 خرید سرویس']],
