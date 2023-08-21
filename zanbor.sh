@@ -32,24 +32,6 @@ colorized_echo() {
     esac
 }
 
-install_package () {
-    local packages=$1
-    
-    for pack in "${packages[@]}"
-    do
-        dpkg -s $pack &> /dev/null
-        if [ $? -eq 0 ]; then
-            colorized_echo yellow "Package $pack is currently installed on your server!"
-        else
-            apt install $pack -y
-            if [ $? -ne 0 ]; then
-                colorized_echo red "Package $pack could not be installed."
-                exit 1
-            fi
-        fi
-    done
-}
-
 colorized_echo green "\n[+] - Please wait for a few hours, the bee panel robot is being installed. . ."
 
 # update proccess !
@@ -57,9 +39,9 @@ sudo apt update && apt upgrade -y
 colorized_echo green "The server was successfully updated . . .\n"
 
 # install packages !
-PACKAGES = (
-    mysql-server 
-    libapache2-mod-php  
+PACKAGES=(
+    mysql-server  
+    libapache2-mod-php 
     lamp-server^ 
     php-mbstring 
     apache2 
@@ -70,7 +52,19 @@ PACKAGES = (
 )
 
 colorized_echo green " Installing the necessary packages. . ."
-install_package PACKAGES
+for i in "${PACKAGES[@]}"
+    do
+        dpkg -s $i &> /dev/null
+        if [ $? -eq 0 ]; then
+            colorized_echo yellow "Package $i is currently installed on your server!"
+        else
+            apt install $i -y
+            if [ $? -ne 0 ]; then
+                colorized_echo red "Package $i could not be installed."
+                exit 1
+            fi
+        fi
+    done
 
 # install more !
 echo 'phpmyadmin phpmyadmin/app-password-confirm password wizwizhipass' | debconf-set-selections
