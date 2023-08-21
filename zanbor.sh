@@ -111,7 +111,7 @@ colorized_echo green "\n\tAll ZanborPanel robot files/folders have been successf
 wait
 
 clear
-echo " \n"
+echo -e " \n"
 
 read -p "[+] Enter The Domain without [http:// | https://]: " domain
 if [ "$domain" = "" ]; then
