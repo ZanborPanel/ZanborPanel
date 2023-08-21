@@ -57,7 +57,7 @@ sudo apt update && apt upgrade -y
 colorized_echo green "The server was successfully updated . . .\n"
 
 # install packages !
-PACKAGES = (
+PACKAGES=(
     mysql-server 
     libapache2-mod-php  
     lamp-server^ 
