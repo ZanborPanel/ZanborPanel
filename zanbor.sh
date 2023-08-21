@@ -67,10 +67,10 @@ for i in "${PACKAGES[@]}"
     done
 
 # install more !
-echo 'phpmyadmin phpmyadmin/app-password-confirm password wizwizhipass' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/app-password-confirm password zanborhipass' | debconf-set-selections
 echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
-echo 'phpmyadmin phpmyadmin/mysql/admin-pass password wizwizhipass' | debconf-set-selections
-echo 'phpmyadmin phpmyadmin/mysql/app-pass password wizwizhipass' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/mysql/admin-pass password zanborhipass' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/mysql/app-pass password zanborhipass' | debconf-set-selections
 echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-selections
 sudo apt-get install phpmyadmin -y
 sudo ln -s /etc/phpmyadmin/apache.conf /etc/apache2/conf-available/phpmyadmin.conf
@@ -120,6 +120,7 @@ if [ "$domain" = "" ]; then
     sleep 2
 else
     DOMAIN="$domain"
+fi
 
 sudo ufw allow 80
 sudo ufw allow 443 
@@ -196,13 +197,13 @@ if [ $? -eq 0 ]; then
     sleep 1
     
     # add information to file
-    # echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${db_name}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > zanbor.install
-    # source_file="/var/www/html/ZanborPanel/config.php"
-    # destination_file="/var/www/html/ZanborPanel/config.php.tmp"
+    echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${db_name}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > zanbor.install
+    source_file="/var/www/html/ZanborPanel/config.php"
+    destination_file="/var/www/html/ZanborPanel/config.php.tmp"
     
-    # replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${TOKEN}/g" -e "s/\[\*DEV\*\]/${CHAT_ID}/g" -e "s/\[\*DB-NAME\*\]/${dbname}/g" -e "s/\[\*DB-USER\*\]/${dbuser}/g" -e "s/\[\*DB-PASS\*\]/${dbpass}/g")
-    # echo "$replace" > "$destination_file"
-    # mv "$destination_file" "$source_file"
+    replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${TOKEN}/g" -e "s/\[\*DEV\*\]/${CHAT_ID}/g" -e "s/\[\*DB-NAME\*\]/${dbname}/g" -e "s/\[\*DB-USER\*\]/${dbuser}/g" -e "s/\[\*DB-PASS\*\]/${dbpass}/g")
+    echo "$replace" > "$destination_file"
+    mv "$destination_file" "$source_file"
     
     sleep 2
     
@@ -216,6 +217,6 @@ if [ $? -eq 0 ]; then
     
     sleep 2
     clear
-    echo " \n"  
+    echo -e " \n"  
     colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Installed"
 fi
