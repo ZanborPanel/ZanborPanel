@@ -31,6 +31,25 @@ colorized_echo() {
         ;;
     esac
 }
+
+install_package () {
+    local packages=$1
+    
+    for pack in "${packages[@]}"
+    do
+        dpkg -s $pack &> /dev/null
+        if [ $? -eq 0 ]; then
+            colorized_echo yellow "Package $pack is currently installed on your server!"
+        else
+            apt install $pack -y
+            if [ $? -ne 0 ]; then
+                colorized_echo red "Package $pack could not be installed."
+                exit 1
+            fi
+        fi
+    done
+}
+
 colorized_echo green "\n[+] - Please wait for a few hours, the bee panel robot is being installed. . ."
 
 # update proccess !
@@ -38,7 +57,7 @@ sudo apt update && apt upgrade -y
 colorized_echo green "The server was successfully updated . . .\n"
 
 # install packages !
-PACKAGES=(
+PACKAGES = (
     mysql-server 
     libapache2-mod-php  
     lamp-server^ 
@@ -51,19 +70,7 @@ PACKAGES=(
 )
 
 colorized_echo green " Installing the necessary packages. . ."
-for i in "${PACKAGES[@]}"
-    do
-        dpkg -s $i &> /dev/null
-        if [ $? -eq 0 ]; then
-            colorized_echo yellow "Package $i is currently installed on your server!"
-        else
-            apt install $pack -y
-            if [ $? -ne 0 ]; then
-                colorized_echo red "Package $pack could not be installed."
-                exit 1
-            fi
-        fi
-    done
+install_package PACKAGES
 
 # install more !
 echo 'phpmyadmin phpmyadmin/app-password-confirm password wizwizhipass' | debconf-set-selections
@@ -118,7 +125,7 @@ if [ "$domain" = "" ]; then
     colorized_echo green "Please wait !"
     sleep 2
 else
-    DOMAIN="$domainname"
+    DOMAIN="$domain"
 
 sudo ufw allow 80
 sudo ufw allow 443 
