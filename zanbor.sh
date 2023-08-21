@@ -183,7 +183,7 @@ fi
 wait
 sleep 2
 
-config_address="/var/www/html/ZanborPanel/install/zanbor.install"
+config_address="/var/www/html/ZanborPanelBot/install/zanbor.install"
 
 if [ -f "$config_address" ]; then
     rm "$config_address"
@@ -195,8 +195,8 @@ sleep 1
 # touch('/var/www/html/ZanborPanelBot/install/zanbor.install')
 echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${db_name}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > /var/www/html/ZanborPanelBot/install/zanbor.install
 
-source_file="/var/www/html/ZanborPanel/config.php"
-destination_file="/var/www/html/ZanborPanel/config.php.tmp"
+source_file="../var/www/html/ZanborPanelBot/config.php"
+destination_file="../var/www/html/ZanborPanelBot/config.php.tmp"
 replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${TOKEN}/g" -e "s/\[\*DEV\*\]/${CHAT_ID}/g" -e "s/\[\*DB-NAME\*\]/${dbname}/g" -e "s/\[\*DB-USER\*\]/${dbuser}/g" -e "s/\[\*DB-PASS\*\]/${dbpass}/g")
 echo "$replace" > "$destination_file"
 mv "$destination_file" "$source_file"
@@ -204,9 +204,9 @@ mv "$destination_file" "$source_file"
 sleep 2
 
 # curl process
-curl -F "db_name=${dbname}&db_username=${dbuser}&db_password=${dbpass}" "https://${DOMAIN}/ZanborPanel/sql/sql.php"
+curl -F "db_name=${dbname}&db_username=${dbuser}&db_password=${dbpass}" "https://${DOMAIN}/ZanborPanelBot/sql/sql.php"
 
-curl -F "url=https://${DOMAIN}/ZanborPanel/index.php" "https://api.telegram.org/bot${TOKEN}/setWebhook"
+curl -F "url=https://${DOMAIN}/ZanborPanelBot/index.php" "https://api.telegram.org/bot${TOKEN}/setWebhook"
 
 TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed"
 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
