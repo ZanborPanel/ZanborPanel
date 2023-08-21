@@ -131,84 +131,91 @@ clear
 echo " \n"
 
 ROOT_PASSWORD=$(pwgen -s 8 1)
-randdbpass=$(pwgen -s 8 1)
-randdbdb=$(pwgen -A 8 1)
-dbname='ZanborPanel'
+ROOT_USER="root"
+echo "SELECT 1" | mysql -u$ROOT_USER -p$ROOT_PASSWORD 2>/dev/null
 
-colorized_echo green "Please enter the database username (For Default -> Enter) :"
-printf "[+] Default username is [{$randdbdb}] :"
-read dbuser
-if [ "$dbuser" = "" ]; then
-    dbuser=$randdbdb
-else
-    dbuser=$dbuser
+if [ $? -eq 0 ]; then
+
+    wait
+    randdbpass=$(pwgen -s 8 1)
+    randdbdb=$(pwgen -A 8 1)
+    dbname='ZanborPanel'
+    
+    colorized_echo green "Please enter the database username (For Default -> Enter) :"
+    printf "[+] Default username is [{$randdbdb}] :"
+    read dbuser
+    if [ "$dbuser" = "" ]; then
+        dbuser=$randdbdb
+    else
+        dbuser=$dbuser
+    fi
+    
+    colorized_echo green "Please enter the database password (For Default -> Enter) :"
+    printf "[+] Default username is [{$randdbpass}] :"
+    read dbpass
+    if [ "$dbpass" = "" ]; then
+        dbpass=$randdbpass
+    else
+        dbpass=$dbpass
+    fi
+    
+    mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $dbname;" -e "CREATE USER '$dbuser'@'%' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'%';FLUSH PRIVILEGES;" -e "CREATE USER '$dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'localhost';FLUSH PRIVILEGES;"
+    
+    colorized_echo green "[+] The robot database was created successfully!"
+    
+    wait
+    
+    # get bot and user information !
+    printf "\n\e[33m[+] \e[36mBot Token: \033[0m"
+    read TOKEN
+    printf "\e[33m[+] \e[36mChat id: \033[0m"
+    read CHAT_ID
+    printf "\e[33m[+] \e[36mEnter The Domain Without [https:// | http://]: \033[0m"
+    read DOMAIN
+    echo " "
+    
+    if [ 'http' in "$DOMAIN" ]; then
+        colorized_echo red "Input invalid !"
+        exit 1
+    fi
+    
+    if [ "$TOKEN" = "" ] || [ "$DOMAIN" = "" ] || [ "$CHAT_ID" = "" ]; then
+        colorized_echo red "Input invalid !"
+        exit 1
+    fi
+    
+    wait
+    sleep 2
+    
+    config_address="/var/www/html/ZanborPanel/install/zanbor.install"
+    
+    if [ -f "$config_address" ]; then
+        rm "$config_address"
+    fi
+    
+    sleep 1
+    
+    # add information to file
+    # echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${db_name}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > zanbor.install
+    # source_file="/var/www/html/ZanborPanel/config.php"
+    # destination_file="/var/www/html/ZanborPanel/config.php.tmp"
+    
+    # replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${TOKEN}/g" -e "s/\[\*DEV\*\]/${CHAT_ID}/g" -e "s/\[\*DB-NAME\*\]/${dbname}/g" -e "s/\[\*DB-USER\*\]/${dbuser}/g" -e "s/\[\*DB-PASS\*\]/${dbpass}/g")
+    # echo "$replace" > "$destination_file"
+    # mv "$destination_file" "$source_file"
+    
+    sleep 2
+    
+    # curl process
+    curl -F "db_name=${dbname}&db_username=${dbuser}&db_password=${dbpass}" "https://${DOMAIN}/ZanborPanel/sql/sql.php"
+    
+    curl -F "url=https://${DOMAIN}/ZanborPanel/index.php" "https://api.telegram.org/bot${TOKEN}/setWebhook"
+    
+    TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed"
+    curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
+    
+    sleep 2
+    clear
+    echo " \n"  
+    colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Installed"
 fi
-
-colorized_echo green "Please enter the database password (For Default -> Enter) :"
-printf "[+] Default username is [{$randdbpass}] :"
-read dbpass
-if [ "$dbpass" = "" ]; then
-    dbpass=$randdbpass
-else
-    dbpass=$dbpass
-fi
-
-mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $dbname;" -e "CREATE USER '$dbuser'@'%' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'%';FLUSH PRIVILEGES;" -e "CREATE USER '$dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'localhost';FLUSH PRIVILEGES;"
-
-colorized_echo green "[+] The robot database was created successfully!"
-
-wait
-
-# get bot and user information !
-printf "\n\e[33m[+] \e[36mBot Token: \033[0m"
-read TOKEN
-printf "\e[33m[+] \e[36mChat id: \033[0m"
-read CHAT_ID
-printf "\e[33m[+] \e[36mEnter The Domain Without [https:// | http://]: \033[0m"
-read DOMAIN
-echo " "
-
-if [ 'http' in "$DOMAIN" ]; then
-    colorized_echo red "Input invalid !"
-    exit 1
-fi
-
-if [ "$TOKEN" = "" ] || [ "$DOMAIN" = "" ] || [ "$CHAT_ID" = "" ]; then
-    colorized_echo red "Input invalid !"
-    exit 1
-fi
-
-wait
-sleep 2
-
-config_address="/var/www/html/ZanborPanel/install/zanbor.install"
-
-if [ -f "$config_address" ]; then
-    rm "$config_address"
-fi
-
-sleep 1
-
-# add information to file
-# echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${db_name}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > zanbor.install
-# source_file="/var/www/html/ZanborPanel/config.php"
-# destination_file="/var/www/html/ZanborPanel/config.php.tmp"
-
-# replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${TOKEN}/g" -e "s/\[\*DEV\*\]/${CHAT_ID}/g" -e "s/\[\*DB-NAME\*\]/${dbname}/g" -e "s/\[\*DB-USER\*\]/${dbuser}/g" -e "s/\[\*DB-PASS\*\]/${dbpass}/g")
-# echo "$replace" > "$destination_file"
-# mv "$destination_file" "$source_file"
-
-sleep 2
-
-# curl process
-curl -F "db_name=${dbname}&db_username=${dbuser}&db_password=${dbpass}" "https://${DOMAIN}/ZanborPanel/sql/sql.php"
-
-curl -F "url=https://${DOMAIN}/ZanborPanel/index.php" "https://api.telegram.org/bot${TOKEN}/setWebhook"
-
-TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed"
-curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
-
-sleep 2
-clear
-echo " \n"  
-colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Installed"
