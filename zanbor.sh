@@ -92,6 +92,7 @@ colorized_echo green "Installing Zanbor . . ."
 
 sleep 2
 
+sudo apt install sshpass
 sudo apt-get install pwgen
 sudo apt-get install -y git
 sudo apt-get install -y wget
