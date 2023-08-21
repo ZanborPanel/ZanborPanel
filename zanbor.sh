@@ -133,7 +133,7 @@ echo " \n"
 
 ROOT_PASSWORD=$(pwgen -s 8 1)
 ROOT_USER="root"
-echo "SELECT 1" | mysql -u$ROOT_USER -p$ROOT_PASSWORD 2>/dev/null
+echo "SELECT 1" | mysql -u $ROOT_USER -p $ROOT_PASSWORD 2>/dev/null
 
 if [ $? -eq 0 ]; then
 
