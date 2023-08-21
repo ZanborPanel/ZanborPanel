@@ -133,7 +133,8 @@ clear
 echo -e " \n"
 
 wait
-ROOT_PASSWORD=$(pwgen -s 8 1)
+
+read -p "[+] Enter the [root] user passord: " ROOT_PASSWORD
 randdbpass=$(pwgen -s 8 1)
 randdbdb=$(pwgen -A 8 1)
 dbname='ZanborPanel'
@@ -156,7 +157,7 @@ else
     dbpass=$dbpass
 fi
 
-mysql -u root -p $ROOT_PASSWORD -e "CREATE DATABASE $dbname;" -e "CREATE USER '$dbuser'@'%' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'%';FLUSH PRIVILEGES;" -e "CREATE USER '$dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'localhost';FLUSH PRIVILEGES;"
+sshpass -p $ROOT_PASSWORD mysql -u root -p -e "CREATE DATABASE $dbname;" -e "CREATE USER '$dbuser'@'%' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'%';FLUSH PRIVILEGES;" -e "CREATE USER '$dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY '$dbpass';GRANT ALL PRIVILEGES ON * . * TO '$dbuser'@'localhost';FLUSH PRIVILEGES;"
 
 colorized_echo green "[+] The robot database was created successfully!"
 
