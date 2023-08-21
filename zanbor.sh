@@ -190,19 +190,13 @@ fi
 sleep 1
 
 # add information to file
-echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${db_name}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > zanbor.install
-source_file="/var/www/html/ZanborPanel/config.php"
-destination_file="/var/www/html/ZanborPanel/config.php.tmp"
+# echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${db_name}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > zanbor.install
+# source_file="/var/www/html/ZanborPanel/config.php"
+# destination_file="/var/www/html/ZanborPanel/config.php.tmp"
 
-token="${1}"
-admin_id="${2}"
-db_name="${3}"
-db_user="${4}"
-db_pass="${5}"
-
-replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${TOKEN}/g" -e "s/\[\*DEV\*\]/${CHAT_ID}/g" -e "s/\[\*DB-NAME\*\]/${dbname}/g" -e "s/\[\*DB-USER\*\]/${dbuser}/g" -e "s/\[\*DB-PASS\*\]/${dbpass}/g")
-echo "$replace" > "$destination_file"
-mv "$destination_file" "$source_file"
+# replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${TOKEN}/g" -e "s/\[\*DEV\*\]/${CHAT_ID}/g" -e "s/\[\*DB-NAME\*\]/${dbname}/g" -e "s/\[\*DB-USER\*\]/${dbuser}/g" -e "s/\[\*DB-PASS\*\]/${dbpass}/g")
+# echo "$replace" > "$destination_file"
+# mv "$destination_file" "$source_file"
 
 sleep 2
 
