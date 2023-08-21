@@ -3,12 +3,7 @@
 date_default_timezone_set('Asia/Tehran');
 error_reporting(E_ALL ^ E_NOTICE);
 
-$config = [
-    'version' => '1.1.1',
-    'token' => '[*TOKEN*]',
-    'dev' => '[*DEV*]',
-    'database' => ['db_name' => '[*DB-NAME*]', 'db_username' => '[*DB-USER*]', 'db_password' => '[*DB-PASS*]',]
-];
+$config = ['version' => '2.0.0', 'domain' => 'https://' . $_SERVER['HTTP_HOST'] . '/' . explode('/', explode('public_html/', $_SERVER['SCRIPT_FILENAME'])[1])[0], 'token' => '[*TOKEN*]', 'dev' => '[*DEV*]', 'database' => ['db_name' => '[*DB-NAME*]', 'db_username' => '[*DB-USER*]', 'db_password' => '[*DB-PASS*]']];
 
 $sql = new mysqli('localhost', $config['database']['db_username'], $config['database']['db_password'], $config['database']['db_name']);
 if ($sql->connect_error) {
@@ -18,7 +13,6 @@ if ($sql->connect_error) {
 define('API_KEY', $config['token']);
 
 if (file_exists('texts.json')) $texts = json_decode(file_get_contents('texts.json'), true);
-
 # ----------------- [ <- variables -> ] ----------------- #
 
 $update = json_decode(file_get_contents('php://input'));
@@ -36,6 +30,30 @@ if (isset($update->message)) {
     $query_id = $update->callback_query->id;
     $message_id = $update->callback_query->message->message_id;
     $username = isset($update->callback_query->from->username) ? '@' . $update->callback_query->from->username : "ندارد";
+}
+
+# ----------------- [ <- others -> ] ----------------- #
+
+if (!isset($sql->connect_error)) {
+    if ($sql->query("SHOW TABLES LIKE 'users'")->num_rows > 0 and $sql->query("SHOW TABLES LIKE 'admins'")->num_rows > 0 and $sql->query("SHOW TABLES LIKE 'test_account_setting'")->num_rows > 0) {
+        if (isset($update)) {
+            $user = $sql->query("SELECT * FROM `users` WHERE `from_id` = '$from_id' LIMIT 1");
+            if ($user->num_rows == 0) {
+                $sql->query("INSERT INTO `users`(`from_id`) VALUES ('$from_id')");
+            }
+            
+            $test_account = $sql->query("SELECT * FROM `test_account_setting`");
+            $payment_setting = $sql->query("SELECT * FROM `payment_setting`");
+            $spam_setting = $sql->query("SELECT * FROM `spam_setting`");
+            $settings = $sql->query("SELECT * FROM `settings`");
+            # ------------------------------------------------- #
+            $test_account_setting = $test_account->fetch_assoc();
+            $payment_setting = $payment_setting->fetch_assoc();
+            $spam_setting = $spam_setting->fetch_assoc();
+            $settings = $settings->fetch_assoc();
+            $user = $user->fetch_assoc();
+        }
+    }
 }
 
 # ----------------- [ <- functions -> ] ----------------- #
@@ -141,6 +159,23 @@ function Conversion($byte, $one = 'GB') {
     return $limit;
 }
 
+function convertToBytes($from) {
+    $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    $number = substr($from, 0, -2);
+    $suffix = strtoupper(substr($from,-2));
+
+    if(is_numeric(substr($suffix, 0, 1))) {
+        return preg_replace('/[^\d]/', '', $from);
+    }
+
+    $exponent = array_flip($units)[$suffix] ?? null;
+    if($exponent === null) {
+        return null;
+    }
+
+    return $number * (1024 ** $exponent);
+}
+
 function isJoin($from_id) {
     global $sql;
     $lockSQL = $sql->query("SELECT `chat_id` FROM `lock`");
@@ -176,12 +211,11 @@ function joinSend($from_id){
 }
 
 function zarinpalGenerator($from_id, $price, $code) {
-    global $config, $sql;
+    global $config, $payment_setting;
     
-    $zainpal_mer = $sql->query("SELECT `zarinpal_token` FROM `payment_setting`")->fetch_assoc()['zarinpal_token'] ?? 0;
     $data = array(
-        'merchant_id' => $zainpal_mer,
-        'amount' => $price,
+        'merchant_id' => $payment_setting['zarinpal_token'],
+        'amount' => $price * 10,
         'callback_url' => $config['domin'] . '/api/callback_zarinpal.php?from_id=' . $from_id . '&price=' . $price . '&code=' . $code,
         'description' => "$code",
     );
@@ -215,21 +249,16 @@ function checkZarinpalFactor($merchend_id, $authority, $amount) {
 	$result = curl_exec($ch);
 	curl_close($ch);
 	$result = json_decode($result, true);
-	if ($err) {
-	    return false;
-	} else {
-	    if ($result['data']['code'] == 100) {
-	        return true;
-	    } else {
-	        return false;
-	    }
-	}
+	if ($result['data']['code'] == 100) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function idpayGenerator($from_id, $price, $code) {
-    global $config, $sql;
+    global $config, $payment_setting;
     
-    $idpay_mer = $sql->query("SELECT `idpay_token` FROM `payment_setting`")->fetch_assoc()['idpay_token'] ?? 0;
     $data = array(
         'order_id' => $code,
         'amount' => $price,
@@ -250,13 +279,53 @@ function idpayGenerator($from_id, $price, $code) {
         CURLOPT_POSTFIELDS => $data,
         CURLOPT_HTTPHEADER => array(
             'Content-Type: application/json',
-            'X-API-KEY: ' . $idpay_mer,
+            'X-API-KEY: ' . $payment_setting['idpay_token'],
             'X-SANDBOX: 1'
       ),
     ));
     $response = json_decode(curl_exec($curl), true);
     curl_close($curl);
     return $response['link'] ?? 'https://idpay.ir';
+}
+
+function nowPaymentGenerator($price_amount, $price_currency, $pay_currency, $order_id) {
+	global $payment_setting;
+	$fields = ['price_amount' => $price_amount, 'price_currency' => $price_currency, 'pay_currency' => $pay_currency, 'order_id' => $order_id];
+	$curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => 'https://api.nowpayments.io/v1/payment',
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => 'POST',
+      CURLOPT_POSTFIELDS => $fields,
+      CURLOPT_HTTPHEADER => array('x-api-key: ' . $payment_setting['nowpayment_token'], 'Content-Type: application/json'),
+    ));
+    $response = curl_exec($curl);
+    curl_close($curl);
+    return json_decode($response, true);
+}
+
+function checkNowPayment($payment_id) {
+	global $payment_setting;
+	$curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => 'https://api.nowpayments.io/v1/payment/' . $payment_id,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => 'GET',
+      CURLOPT_HTTPHEADER => array('x-api-key: ' . $payment_setting['nowpayment_token'])
+    ));
+    $response = curl_exec($curl);
+    curl_close($curl);
+    return json_decode($response, true);
 }
 
 function generateUUID() {
@@ -356,44 +425,58 @@ function Modifyuser($username, $data, $token, $url) {
     return $response;
 }
 
-# ----------------- [ <- others -> ] ----------------- #
-
-if (!isset($sql->connect_error)) {
-    if ($sql->query("SHOW TABLES LIKE 'users'")->num_rows > 0 and $sql->query("SHOW TABLES LIKE 'admins'")->num_rows > 0) {
-        if (isset($update)) {
-            $user = $sql->query("SELECT * FROM `users` WHERE `from_id` = '$from_id' LIMIT 1");
-            if ($user->num_rows == 0) {
-                $sql->query("INSERT INTO `users`(`from_id`) VALUES ('$from_id')");
-            }
-            $user = $user->fetch_assoc();
-        }
-    }
-}
-
 # ----------------- [ <- keyboard -> ] ----------------- #
 
 if ($from_id == $config['dev']) {
-    $start_key = json_encode(['keyboard' => [
-        [['text' => '🔧 مدیریت']],
-        [['text' => '🛍 سرویس های من'], ['text' => '🛒 خرید سرویس']],
-        [['text' => '👤 پروفایل'], ['text' => '🛒 تعرفه خدمات'], ['text' => '💸 شارژ حساب']],
-        [['text' => '📮 پشتیبانی آنلاین']]
-    ], 'resize_keyboard' => true]);
+    if ($test_account_setting['status'] == 'active' and $user['test_account'] == 'no') {
+        $start_key = json_encode(['keyboard' => [
+            [['text' => '🔧 مدیریت']],
+            [['text' => '🛍 سرویس های من'], ['text' => '🛒 خرید سرویس']],
+            [['text' => '🎁 سرویس تستی (رایگان)']],
+            [['text' => '👤 پروفایل'], ['text' => '🛒 تعرفه خدمات'], ['text' => '💸 شارژ حساب']],
+            [['text' => '📮 پشتیبانی آنلاین']]
+        ], 'resize_keyboard' => true]);
+    } else {
+        $start_key = json_encode(['keyboard' => [
+            [['text' => '🔧 مدیریت']],
+            [['text' => '🛍 سرویس های من'], ['text' => '🛒 خرید سرویس']],
+            [['text' => '👤 پروفایل'], ['text' => '🛒 تعرفه خدمات'], ['text' => '💸 شارژ حساب']],
+            [['text' => '📮 پشتیبانی آنلاین']]
+        ], 'resize_keyboard' => true]);
+    }
 } else {
-    $start_key = json_encode(['keyboard' => [
-        [['text' => '🛍 سرویس های من'], ['text' => '🛒 خرید سرویس']],
-        [['text' => '👤 پروفایل'], ['text' => '🛒 تعرفه خدمات'], ['text' => '💸 شارژ حساب']],
-        [['text' => '📮 پشتیبانی آنلاین']]
-    ], 'resize_keyboard' => true]);
+    if ($test_account_setting['status'] == 'active' and $user['test_account'] == 'no') {
+        $start_key = json_encode(['keyboard' => [
+            [['text' => '🛍 سرویس های من'], ['text' => '🛒 خرید سرویس']],
+            [['text' => '🎁 سرویس تستی (رایگان)']],
+            [['text' => '👤 پروفایل'], ['text' => '🛒 تعرفه خدمات'], ['text' => '💸 شارژ حساب']],
+            [['text' => '📮 پشتیبانی آنلاین']]
+        ], 'resize_keyboard' => true]);
+    } else {
+        $start_key = json_encode(['keyboard' => [
+            [['text' => '🛍 سرویس های من'], ['text' => '🛒 خرید سرویس']],
+            [['text' => '👤 پروفایل'], ['text' => '🛒 تعرفه خدمات'], ['text' => '💸 شارژ حساب']],
+            [['text' => '📮 پشتیبانی آنلاین']]
+        ], 'resize_keyboard' => true]);
+    }
 }
 
 $back = json_encode(['keyboard' => [
     [['text' => '🔙 بازگشت']]
 ], 'resize_keyboard' => true]);
 
+$cancel_copen = json_encode(['inline_keyboard' => [
+    [['text' => '❌ لغو', 'callback_data' => 'cancel_copen']]
+]]);
+
+$confirm_service = json_encode(['keyboard' => [
+    [['text' => '☑️ ایجاد سرویس']], [['text' => '❌  انصراف']]
+], 'resize_keyboard' => true]);
+
 $select_diposet_payment = json_encode(['inline_keyboard' => [
     [['text' => '▫️کارت به کارت', 'callback_data' => 'kart']],
     [['text' => '▫️زرینپال', 'callback_data' => 'zarinpal'], ['text' => '▫️آیدی پی', 'callback_data' => 'idpay']],
+    [['text' => '▫️پرداخت ارزی', 'callback_data' => 'nowpayment']],
     [['text' => '❌ لغو عملیات', 'callback_data' => 'cancel_payment_proccess']]
 ]]);
 
@@ -411,10 +494,19 @@ $manage_statistics = json_encode(['keyboard' => [
 ], 'resize_keyboard' => true]);
 
 $manage_server = json_encode(['keyboard' => [
+    [['text' => '⏱ مدیریت اکانت تست']],
     [['text' => '⚙️ مدیریت پلن ها'], ['text' => '🎟 افزودن پلن']],
     [['text' => '⚙️ لیست سرور ها'], ['text' => '➕ افزودن سرور']],
     [['text' => '⬅️ بازگشت به مدیریت']]
 ], 'resize_keyboard' => true]);
+
+$manage_test_account = json_encode(['inline_keyboard' => [
+    [['text' => ($test_account_setting['status'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_test_account_status'], ['text' => '▫️وضعیت :', 'callback_data' => 'null']],
+    [['text' => ($test_account_setting['panel'] == 'none') ? '🔴 وصل نیست' : $sql->query("SELECT `name` FROM `panels` WHERE `code` = '{$test_account_setting['panel']}'")->fetch_assoc()['name'], 'callback_data' => 'change_test_account_panel'], ['text' => '▫️متصل به پنل :', 'callback_data' => 'null']],
+    [['text' => $sql->query("SELECT * FROM `test_account`")->num_rows, 'callback_data' => 'null'], ['text' => '▫️تعداد اکانت تست :', 'callback_data' => 'null']],
+    [['text' => $test_account_setting['volume'] . ' GB', 'callback_data' => 'change_test_account_volume'], ['text' => '▫️حجم :', 'callback_data' => 'null']],
+    [['text' => $test_account_setting['time'] . ' ساعت', 'callback_data' => 'change_test_account_time'], ['text' => '▫️زمان :', 'callback_data' => 'null']],
+]]);
 
 $manage_service = json_encode(['keyboard' => [
     [['text' => '#⃣ لیست همه سرویس ها']],
@@ -445,17 +537,38 @@ $manage_admin = json_encode(['keyboard' => [
 ], 'resize_keyboard' => true]);
 
 $manage_setting = json_encode(['keyboard' => [
+    [['text' => '🚫 مدیریت ضد اسپم']],
     [['text' => '◽کانال ها'], ['text' => '◽بخش ها']],
     [['text' => '◽تنظیم متون ربات'], ['text' => '◽تنظیمات درگاه پرداخت']],
+    [['text' => '🎁 مدیریت کد تخفیف']],
     [['text' => '⬅️ بازگشت به مدیریت']]
 ], 'resize_keyboard' => true]);
+
+$manage_copens = json_encode(['inline_keyboard' => [
+    [['text' => '➕افزودن تخفیف', 'callback_data' => 'add_copen'], ['text' => '✏️ مدیریت', 'callback_data' => 'manage_copens']]
+]]);
+
+$manage_spam = json_encode(['inline_keyboard' => [
+    [['text' => ($spam_setting['status'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_spam'], ['text' => '▫️وضعیت :', 'callback_data' => 'null']],
+    [['text' => ($spam_setting['type'] == 'ban') ? '🚫 مسدود' : '⚠️ اخطار', 'callback_data' => 'change_type_spam'], ['text' => '▫️مدل برخورد :', 'callback_data' => 'null']],
+    [['text' => $spam_setting['time'] . ' ثانیه', 'callback_data' => 'change_time_spam'], ['text' => '▫️زمان : ', 'callback_data' => 'null']],
+    [['text' => $spam_setting['count_message'] . ' عدد', 'callback_data' => 'change_count_spam'], ['text' => '▫️تعداد پیام : ', 'callback_data' => 'null']],
+]]);
 
 $manage_payment = json_encode(['keyboard' => [
     [['text' => '✏️ وضعیت خاموش/روشن درگاه پرداخت های ربات']],
     [['text' => '▫️تنظیم صاحب شماره کارت'], ['text' => '▫️تنظیم شماره کارت']],
     [['text' => '▫️زرین پال'], ['text' => '▫️آیدی پی']],
+    [['text' => '◽ NOWPayments']],
     [['text' => '⬅️ بازگشت به مدیریت']]
 ], 'resize_keyboard' => true]);
+
+$manage_off_on_paymanet = json_encode(['inline_keyboard' => [
+    [['text' => ($payment_setting['zarinpal_status'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_zarinpal'], ['text' => '▫️زرینپال :', 'callback_data' => 'null']],
+    [['text' => ($payment_setting['idpay_status'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_idpay'], ['text' => '▫️آیدی پی :', 'callback_data' => 'null']],
+    [['text' => ($payment_setting['nowpayment_status'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_nowpayment'], ['text' => ': nowpayment ▫️', 'callback_data' => 'null']],
+    [['text' => ($payment_setting['card_status'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_card'], ['text' => '▫️کارت به کارت :', 'callback_data' => 'null']]
+]]);
 
 $manage_texts = json_encode(['keyboard' => [
     [['text' => 'متن استارت']],
@@ -481,4 +594,16 @@ $back_panellist = json_encode(['inline_keyboard' => [
 
 $back_services = json_encode(['inline_keyboard' => [
     [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
+]]);
+
+$back_account_test = json_encode(['inline_keyboard' => [
+    [['text' => '🔙 بازگشت', 'callback_data' => 'back_account_test']]
+]]);
+
+$back_spam = json_encode(['inline_keyboard' => [
+    [['text' => '🔙 بازگشت', 'callback_data' => 'back_spam']]
+]]);
+
+$back_copen = json_encode(['inline_keyboard' => [
+    [['text' => '🔙 بازگشت', 'callback_data' => 'back_copen']]
 ]]);
