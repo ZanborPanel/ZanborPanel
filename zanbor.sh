@@ -149,7 +149,7 @@ else
 fi
 
 colorized_echo green "Please enter the database password (For Default -> Enter) :"
-printf "[+] Default username is [{$randdbpass}] :"
+printf "[+] Default password is [{$randdbpass}] :"
 read dbpass
 if [ "$dbpass" = "" ]; then
     dbpass=$randdbpass
