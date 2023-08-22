@@ -135,7 +135,7 @@ echo -e " \n"
 wait
 
 read -p "[+] Enter the [root] user passord: " ROOT_PASSWORD
-randdbpass=$(pwgen -s 8 1)
+randdbpass=$(openssl rand -base64 8 | tr -dc 'a-zA-Z0-9' | head -c 8)
 randdbdb=$(pwgen -A 8 1)
 dbname='ZanborPanel'
 
