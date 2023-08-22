@@ -216,6 +216,5 @@ curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="$
 
 sleep 2
 clear
-echo -e " \n"  
-colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Installed"
-colorized_echo green "        Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
+colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Installed\n"
+colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
