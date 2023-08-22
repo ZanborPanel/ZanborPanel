@@ -206,14 +206,15 @@ mv "$destination_file" "$source_file"
 sleep 2
 
 # curl process
-curl -F "db_name=${dbname}&db_username=${dbuser}&db_password=${dbpass}" "https://${DOMAIN}/ZanborPanelBot/sql/sql.php"
+curl --location "https://${DOMAIN}/ZanborPanelBot/sql/sql.php?db_password=${dbpass}&db_name=${dbname}&db_username=${dbuser}"
 
 curl -F "url=https://${DOMAIN}/ZanborPanelBot/index.php" "https://api.telegram.org/bot${TOKEN}/setWebhook"
 
-TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed"
+TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed -> @ZanborPanel | @ZanborPanelGap"
 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 
 sleep 2
 clear
 echo -e " \n"  
 colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Installed"
+colorized_echo green "        Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
