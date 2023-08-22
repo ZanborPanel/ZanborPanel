@@ -196,7 +196,7 @@ sleep 1
 
 # add information to file
 # touch('/var/www/html/ZanborPanelBot/install/zanbor.install')
-echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${db_name}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > /var/www/html/ZanborPanelBot/install/zanbor.install
+echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${dbname}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > /var/www/html/ZanborPanelBot/install/zanbor.install
 
 source_file="../var/www/html/ZanborPanelBot/config.php"
 destination_file="../var/www/html/ZanborPanelBot/config.php.tmp"
