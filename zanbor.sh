@@ -140,7 +140,7 @@ randdbdb=$(pwgen -A 8 1)
 dbname='ZanborPanel'
 
 colorized_echo green "Please enter the database username (For Default -> Enter) :"
-printf "[+] Default username is [{$randdbdb}] :"
+printf "[+] Default username is [${randdbdb}] :"
 read dbuser
 if [ "$dbuser" = "" ]; then
     dbuser=$randdbdb
@@ -149,7 +149,7 @@ else
 fi
 
 colorized_echo green "Please enter the database password (For Default -> Enter) :"
-printf "[+] Default password is [{$randdbpass}] :"
+printf "[+] Default password is [${randdbpass}] :"
 read dbpass
 if [ "$dbpass" = "" ]; then
     dbpass=$randdbpass
