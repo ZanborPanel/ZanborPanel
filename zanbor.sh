@@ -137,7 +137,8 @@ wait
 read -p "[+] Enter the [root] user passord: " ROOT_PASSWORD
 randdbpass=$(openssl rand -base64 8 | tr -dc 'a-zA-Z0-9' | head -c 10)
 randdbdb=$(pwgen -A 8 1)
-dbname='ZanborPanel'
+randdbname=$(openssl rand -base64 8 | tr -dc 'a-zA-Z0-9' | head -c 4)
+dbname="ZanborPanel_${randdbpass}"
 
 colorized_echo green "Please enter the database username (For Default -> Enter) :"
 printf "[+] Default username is [${randdbdb}] :"
