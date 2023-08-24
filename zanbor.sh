@@ -105,7 +105,7 @@ sudo systemctl restart apache2.service
 
 wait
 
-git clone https://github.com/ZanborPanel/test.git /var/www/html/ZanborPanelBot
+git clone https://github.com/ZanborPanel/ZanborPanel.git /var/www/html/ZanborPanelBot
 sudo chmod -R 777 /var/www/html/ZanborPanelBot/
 colorized_echo green "\n\tAll ZanborPanel robot files/folders have been successfully installed on your server!"
 
