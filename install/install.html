@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>ZanborPanel | زنبور پنل</title>
+</head>
+<body>
+    <div class="container">
+        <div class="install-card">
+            <h2 class="zanbor-panel">ZanborPanel | زنبور پنل</h2>
+            <p class="tagline">زنبور پنل همیشه در کنار شما</p>
+            <form action="install.php" method="POST" class="form">
+                <div class="form-group">
+                    <label for="token"><i class="fas fa-key"></i> توکن ربات</label>
+                    <input type="text" id="token" name="token" placeholder="توکن ربات را وارد کنید" required="">
+                </div>
+                <div class="form-group">
+                    <label for="admin-id"><i class="fas fa-user"></i> آیدی ادمین</label>
+                    <input type="number" id="admin-id" name="admin-id" placeholder="آیدی عددی ادمین را وارد کنید" required="">
+                </div>
+                <div class="form-group">
+                    <label for="db-name"><i class="fas fa-database"></i> نام دیتابیس</label>
+                    <input type="text" id="db-name" name="db-name" placeholder="نام دیتابیس را وارد کنید" required="">
+                </div>
+                <div class="form-group">
+                    <label for="db-user"><i class="fas fa-user"></i> یوزرنیم دیتابیس</label>
+                    <input type="text" id="db-user" name="db-user" placeholder="یوزرنیم دیتابیس را وارد کنید" required="">
+                </div>
+                <div class="form-group">
+                    <label for="db-pass"><i class="fas fa-lock"></i> پسورد دیتابیس</label>
+                    <input type="password" id="db-pass" name="db-pass" placeholder="پسورد دیتابیس را وارد کنید" required="">
+                </div>
+                <div class="form-group">
+                    <label for="db-pass"><i class="fas fa-select"></i> محل نصب</label>
+                    <select name="install_location" required>
+                        <optgroup label="انتخاب کنید">
+                            <option value="host">هاست</option>
+                            <option value="server">سرور</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="button-container">
+                    <button type="submit"><i class="fas fa-check-circle"></i> ثبت و نصب ربات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="social-links">
+    <a href="https://t.me/ZanborPanel" class="telegram-link">
+        <i class="fab fa-telegram-plane"></i> تلگرام
+    </a>
+</div>
+</body>
+</html>

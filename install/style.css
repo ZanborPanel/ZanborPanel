@@ -1,0 +1,162 @@
+@font-face {
+    font-family: IRANSansX;
+    font-style: normal;
+    font-weight: 400;
+    src: url('fonts/iransansx/woff/IRANSansX-Regular.woff') format('woff'),
+        url('fonts/iransansx/woff2/IRANSansX-Regular.woff2') format('woff2');
+}
+
+* {
+    font-family: "IRANSansX", serif;
+    direction: rtl;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'IRANSans', sans-serif;
+    background-color: #252d48;
+    color: #fff;
+    font-size: 16px;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e53935, #3949ab);
+    background-size: cover;
+}
+
+.install-card {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    animation: slideInUp 1s ease;
+    position: relative;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h2.zanbor-panel {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+p.tagline {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #bbb;
+}
+
+.form-group label i {
+    margin-left: 8px;
+    font-size: 18px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"], select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    margin-bottom: 0px;
+    transition: background-color 0.3s ease;
+}
+
+option {
+    background-color: #2980b9;
+    color: black;
+    font-size: 14px;
+}
+
+input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    outline: none;
+}
+
+.button-container {
+    position: relative;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.telegram-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.telegram-link i {
+    margin-right: 6px;
+    font-size: 14px;
+}
