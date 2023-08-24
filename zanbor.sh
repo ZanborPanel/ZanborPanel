@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Written By: ZanborPanel
+# Channel: @ZanborPanel
+# Group: @ZanborPanelGap
 
 if [ "$(id -u)" -ne 0 ]; then
     echo -e "\033[33mPlease run as root\033[0m"
