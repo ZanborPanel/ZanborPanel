@@ -34,7 +34,7 @@ bash <(curl -s https://raw.githubusercontent.com/ZanborPanel/ZanborPanel/main/za
 - **خطای توکن اشتباه موفق نصب**: همونطور که از متن خطا معلومه توکن که برای نصب ارسال کردید اشتباه هست.
 - **خطای اطلاعات دیتابیس**: این خطا زمانی رخ میدهد که اطلاعات دیتابیس ارسالی شما به اشتباه هست ( `name` , `username`, `password` ).
 
-## دسترسی های لازم
+## دسترسی های لازم برای نصب روی هاست
 - باز بودن دسترسی `CURL`
 - باز بودن دسترسی `curl_exec`
 - باز بودن پورت های لازمه مثلا `8000`
@@ -48,11 +48,16 @@ bash <(curl -s https://raw.githubusercontent.com/ZanborPanel/ZanborPanel/main/za
 - موقع افزودن پنل به ربات اگر پنلتون ssl داشت ادرس ورودی رو با `https` بدید و در غیر این صورت `http` وارد کنید.
 - برای ران کردن ربات در هاست حتما باید ssl دامنه فعال باشد.
 - در صورت ران کردن روی هاست , هاست باید خارجی باشد.
+- در صورت ران کردن روی سرور باید پسورد `roor` را بدانید.
 
 ## **پنل های پشتیبانی شده در ربات**
 - Marzban
 ```bash
 sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
+```
+- Sanaei
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
 ```
 
 ## آموزش ساخت ربات در BotFather ( مرحله به مرحله )
@@ -71,6 +76,7 @@ sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/
 - مولتی پنل
 - مولتی پلن
 - افزودن پنل
+- ساپورت از پنل سنایی و مرزبان
 - افزودن پلن با فیلد های دلخواه
 - اشتراک هوشمند
 - وضعیت کامل سرور/پنل
@@ -87,6 +93,7 @@ sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/
 - گزارش لحضه از در ربات
 - مدیریت آمار ربات
 - مدیریت کامل بخش درگاه پرداخت
+- مدیریت کامل بخش راهنمای اتصال
 - مدیریت ضد اسپم ربات
 - مدیریت اکانت تست
 - لینک هوشمند
