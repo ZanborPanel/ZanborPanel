@@ -52,7 +52,9 @@ do
                 sudo apt install curl -y
                 sllep 2
                 mv /var/www/html/ZanborPanelBot/install/zanbor.install /var/www/html/zanbor.install
+                sleep 1
                 rm -r /var/www/html/ZanborPanelBot/
+                colorized_echo green "All file and folder deleted for update bot !\n"
                 git clone https://github.com/ZanborPanel/ZanborPanel.git /var/www/html/ZanborPanelBot/
                 sudo chmod -R 777 /var/www/html/ZanborPanelBot/
                 mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
@@ -63,6 +65,7 @@ do
                 db_name=$(grep -oP '(?<="db_name": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 db_username=$(grep -oP '(?<="db_username": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 db_password=$(grep -oP '(?<="db_password": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
+                echo -e "Your Bot Token: ${token}"
 
                 source_file="/var/www/html/ZanborPanelBot/config.php"
                 destination_file="/var/www/html/ZanborPanelBot/config.php.tmp"
