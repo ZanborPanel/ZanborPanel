@@ -61,7 +61,7 @@ do
                 sleep 2
                 
                 content=$(cat /var/www/html/ZanborPanelBot/install/zanbor.install)
-                token=$(echo "$content" | grep -oP '(?<="token": ")[^"]*')
+                token=$(echo "$content" | jq -r '.token')
                 dev=$(grep -oP '(?<="dev": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 db_name=$(grep -oP '(?<="db_name": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 db_username=$(grep -oP '(?<="db_username": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
