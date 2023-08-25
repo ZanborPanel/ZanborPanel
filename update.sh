@@ -60,11 +60,11 @@ do
                 mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
                 sleep 2
 
-                token=$(grep -oP '(?<="token": ")[^"]*' /var/www/html/zanbor.install)
-                dev=$(grep -oP '(?<="dev": ")[^"]*' /var/www/html/zanbor.install)
-                db_name=$(grep -oP '(?<="db_name": ")[^"]*' /var/www/html/zanbor.install)
-                db_username=$(grep -oP '(?<="db_username": ")[^"]*' /var/www/html/zanbor.install)
-                db_password=$(grep -oP '(?<="db_password": ")[^"]*' /var/www/html/zanbor.install)
+                token=$(grep -oP '(?<="token": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
+                dev=$(grep -oP '(?<="dev": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
+                db_name=$(grep -oP '(?<="db_name": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
+                db_username=$(grep -oP '(?<="db_username": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
+                db_password=$(grep -oP '(?<="db_password": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 echo -e "Your Bot Token: ${token}"
 
                 source_file="/var/www/html/ZanborPanelBot/config.php"
