@@ -136,6 +136,29 @@ class Sanayi{
         $result = json_decode(curl_exec($curl), true);
         return $result;
     }
+
+    public function getPortById($id) {
+        $url = $this->base_url . '/panel/inbound/list';
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_HTTPHEADER => $this->headers
+        ));
+        $result = json_decode(curl_exec($curl), true)['obj'];
+        foreach ($result as $value) {
+            if ($value['id'] == $id) {
+                return json_encode(['status' => true, 'port' => $value['port'], 448]);
+            }
+        }
+        return json_encode(['status' => false, 'msg' => 'id is not found !', 'status_code' => 404]);
+    }
     
     public function addClient($name, $id, $date, $limit){
         
