@@ -39,7 +39,7 @@ colorized_echo green "\n[+] - Please wait for a few seconde !"
 echo " "
 
 question="Please select your action?"
-actions=("Update Bot", "Delete Bot", "Donate", "Exit")
+actions=("Update Bot" "Delete Bot" "Donate" "Exit")
 
 select opt in "${actions[@]}"
 do
