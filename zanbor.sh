@@ -128,8 +128,8 @@ fi
 
 sudo ufw allow 80
 sudo ufw allow 443 
-sudo systemctl enable certbot.timer
 sudo apt install letsencrypt -y
+sudo systemctl enable certbot.timer
 sudo certbot certonly --standalone --agree-tos --preferred-challenges http -d $DOMAIN
 sudo apt install python3-certbot-apache -y
 sudo certbot --apache --agree-tos --preferred-challenges http -d $DOMAIN
