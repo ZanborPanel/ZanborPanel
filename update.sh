@@ -50,6 +50,7 @@ do
             if [ "$answer" != "${answer#[Yy]}" ]; then
                 colorized_echo green "Please wait, Updating . . ."
                 sudo apt install curl -y
+                sudo apt-get install jq
                 sleep 2
                 mv /var/www/html/ZanborPanelBot/install/zanbor.install /var/www/html/zanbor.install
                 sleep 1
@@ -63,10 +64,10 @@ do
                 cat /var/www/html/ZanborPanelBot/install/zanbor.install
                 content=$(cat /var/www/html/ZanborPanelBot/install/zanbor.install)
                 token=$(echo "$content" | jq -r '.token')
-                dev=$(grep -oP '(?<="dev": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
-                db_name=$(grep -oP '(?<="db_name": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
-                db_username=$(grep -oP '(?<="db_username": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
-                db_password=$(grep -oP '(?<="db_password": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
+                dev=$(echo "$content" | jq -r '.dev')
+                db_name=$(echo "$content" | jq -r '.db_name')
+                db_username=$(echo "$content" | jq -r '.db_username')
+                db_password=$(echo "$content" | jq -r '.db_password')
                 echo -e "Your Bot Token: ${token}"
 
                 source_file="/var/www/html/ZanborPanelBot/config.php"
