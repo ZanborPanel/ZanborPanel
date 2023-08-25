@@ -39,7 +39,7 @@ colorized_echo green "\n[+] - Please wait for a few seconde !"
 echo " "
 
 question="Please select your action?"
-actions=("Update Bot" "Delete Bot" "Donate" "Exit")
+actions=("Update Bot", "Delete Bot", "Donate", "Exit")
 
 select opt in "${actions[@]}"
 do
@@ -81,8 +81,9 @@ do
                 colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
 
             else
-                clear
+                echo -e "\n"
                 colorized_echo red "Update Canceled !"
+                echo -e "\n"
                 exit 1
             fi
 
@@ -100,13 +101,15 @@ do
                 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 
                 sleep 2
-                clear
+                echo -e "\n"
                 colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Deleted"
                 colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
+                echo -e "\n"
 
             else
-                clear
+                echo -e "\n"
                 colorized_echo red "Delete Canceled !"
+                echo -e "\n"
                 exit 1
             fi
 
@@ -114,12 +117,14 @@ do
         "Donate")
             echo -e "\n"
             colorized_echo green "[+] Bank Meli: 6037998195739130\n\n[+] Tron (TRX): TAwNcAYrHp2SxhchywA6NhUEF4aVwJHufD\n\n[+] ETH, BNB, MATIC network (ERC20, BEP20): 0x36c5109885b59Ddd0cA4ea497765d326eb48396F\n\n[+] Bitcoin network: bc1qccunjllf2guca7dhwyw2x3u80yh4k0hg88yvpk" 
+            echo -e "\n"
             exit 0
 
             break;;
         "Exit")
             echo -e "\n"
             colorized_echo green "Exited !"
+            echo -e "\n"
 
             break;;
             *) echo "Invalid option!"
