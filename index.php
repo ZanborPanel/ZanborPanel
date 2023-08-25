@@ -214,7 +214,9 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
         # ---------------- get links and subscription_url for send the user ---------------- #
         if ($info_panel->num_rows > 0) {
             $getMe = json_decode(file_get_contents("https://api.telegram.org/bot{$config['token']}/getMe"), true);
-            $link = str_replace(['%s1', '%s2', '%s3'], [$create_status['results']['id'], str_replace(['https://', 'http://'], ['', ''], $panel['login_link']), $create_status['results']['remark']], $san_setting['example_link']);
+            $link = str_replace(['%s1', '%s2', '%s3'], [$create_status['results']['id'], str_replace(parse_url($panel['login_link'])['port'], json_decode($xui->getPortById($san_setting['inbound_id']), true)['port'], str_replace(['https://', 'http://'], ['', ''], $panel['login_link'])), $create_status['results']['remark']], $san_setting['example_link']);
+            sendMessage($from_id, $panel['login_link']);
+            sendMessage($from_id, json_decode($xui->getPortById($san_setting['inbound_id']), true)['port']);
             if ($panel['qr_code'] == 'active') {
                 $encode_url = urlencode($link);
                 bot('sendPhoto', ['chat_id' => $from_id, 'photo' => "https://api.qrserver.com/v1/create-qr-code/?data=$encode_url&size=800x800", 'caption' => sprintf($texts['success_create_service_sanayi'], $name, $location, $date, $limit, number_format($price), $link, $create_status['results']['subscribe'], '@' . $getMe['result']['username']), 'parse_mode' => 'html', 'reply_markup' => $start_key]);
@@ -281,7 +283,7 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
             $san_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
             $create_service = $xui->addClient($name, $san_setting['inbound_id'], $test_account_setting['volume'], ($test_account_setting['time'] / 24));
             $create_status = json_decode($create_service, true);
-            $link = str_replace(['%s1', '%s2', '%s3'], [$create_status['results']['id'], str_replace(['https://', 'http://'], ['', ''], $panel_fetch['login_link']), $create_status['results']['remark']], $san_setting['example_link']);
+            $link = str_replace(['%s1', '%s2', '%s3'], [$create_status['results']['id'], str_replace(parse_url($panel_fetch['login_link'])['port'], json_decode($xui->getPortById($san_setting['inbound_id']), true)['port'], str_replace(['https://', 'http://'], ['', ''], $panel_fetch['login_link'])), $create_status['results']['remark']], $san_setting['example_link']);
             # ---------------- check errors ---------------- #
             if ($create_status['status'] == false) {
                 sendMessage($from_id, sprintf($texts['create_error'], 1), $start_key);
@@ -836,7 +838,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $sql->query("SELECT * FROM 
     
     elseif (strpos($data, 'change_status_panel-') !== false) {
         $code = explode('-', $data)[1];
-        $info_panel = $sql->query("SELECT * FROM `panels` WHERE `code` = '$code'");
+        $info_panel = $sql->query("SELECT * FROM `panels` WHERE `code` = '$code'")->fetch_assoc();
         if ($info_panel['type'] == 'sanayi') {
             $sanayi_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
             if ($sanayi_setting['example_link'] == 'none') {
@@ -847,8 +849,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $sql->query("SELECT * FROM 
                 exit;
             }
         }
-        $status = $info_panel->fetch_assoc()['status'];
-        $type = $info_panel->fetch_assoc()['type'];
+        $status = $info_panel['status'];
         if($status == 'active'){
             $sql->query("UPDATE `panels` SET `status` = 'inactive' WHERE `code` = '$code'");
         }else{
