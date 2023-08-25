@@ -39,7 +39,7 @@ colorized_echo green "\n[+] - Please wait for a few seconde !"
 echo " "
 
 question="Please select your action?"
-actions=("Update Bot", "Delete Bot", "Donate", "Exit")
+actions=("Update Bot" "Delete Bot" "Donate" "Exit")
 
 select opt in "${actions[@]}"
 do
@@ -76,10 +76,9 @@ do
                 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 
                 sleep 2
-                echo -e "\n"
+                clear
                 colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Updated"
                 colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
-                echo -e "\n"
 
             else
                 echo -e "\n"
@@ -131,4 +130,3 @@ do
             *) echo "Invalid option!"
     esac
 done
-
