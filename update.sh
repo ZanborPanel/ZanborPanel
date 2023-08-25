@@ -50,7 +50,7 @@ do
             if [ "$answer" != "${answer#[Yy]}" ]; then
                 colorized_echo green "Please wait, Updating . . ."
                 sudo apt install curl -y
-                sllep 2
+                slep 2
                 mv /var/www/html/ZanborPanelBot/install/zanbor.install /var/www/html/zanbor.install
                 sleep 1
                 rm -r /var/www/html/ZanborPanelBot/
