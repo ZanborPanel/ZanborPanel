@@ -76,9 +76,10 @@ do
                 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 
                 sleep 2
-                clear
+                echo -e "\n"
                 colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Updated"
                 colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
+                echo -e "\n"
 
             else
                 echo -e "\n"
