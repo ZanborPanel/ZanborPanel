@@ -215,8 +215,6 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
         if ($info_panel->num_rows > 0) {
             $getMe = json_decode(file_get_contents("https://api.telegram.org/bot{$config['token']}/getMe"), true);
             $link = str_replace(['%s1', '%s2', '%s3'], [$create_status['results']['id'], str_replace(parse_url($panel['login_link'])['port'], json_decode($xui->getPortById($san_setting['inbound_id']), true)['port'], str_replace(['https://', 'http://'], ['', ''], $panel['login_link'])), $create_status['results']['remark']], $san_setting['example_link']);
-            sendMessage($from_id, $panel['login_link']);
-            sendMessage($from_id, json_decode($xui->getPortById($san_setting['inbound_id']), true)['port']);
             if ($panel['qr_code'] == 'active') {
                 $encode_url = urlencode($link);
                 bot('sendPhoto', ['chat_id' => $from_id, 'photo' => "https://api.qrserver.com/v1/create-qr-code/?data=$encode_url&size=800x800", 'caption' => sprintf($texts['success_create_service_sanayi'], $name, $location, $date, $limit, number_format($price), $link, $create_status['results']['subscribe'], '@' . $getMe['result']['username']), 'parse_mode' => 'html', 'reply_markup' => $start_key]);
@@ -245,15 +243,15 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
                 $panel = $panel->fetch_assoc();
                 # ------------ set proxies proccess ------------ #
                 $protocols = explode('|', $panel['protocols']);
-                unset($protocols[count($protocols)-1]);
-                $proxies = array();
-                foreach ($protocols as $protocol) {
-                    if ($protocol == 'vless' and $panel['flow'] == 'flowon'){
-                        $proxies[$protocol] = array('flow' => 'xtls-rprx-vision');
-                    } else {
-                        $proxies[$protocol] = array();
-                    }
-                }
+	    	unset($protocols[count($protocols)-1]);
+	    	$proxies = array();
+		foreach ($protocols as $protocol) {
+		    if ($protocol == 'vless' and $panel['flow'] == 'flowon'){
+		        $proxies[$protocol] = array('flow' => 'xtls-rprx-vision');
+		    } else {
+		        $proxies[$protocol] = array();
+		    }
+	    	}
                 # ---------------------------------------------- #
                 $code = rand(111111, 999999);
                 $name = base64_encode($code) . '_' . $from_id;
@@ -275,6 +273,7 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
                 deleteMessage($from_id, $message_id + 1);
                 sendmessage($from_id, sprintf($texts['create_error'], 0), $start_key);
             }
+	
         } elseif ($panel_fetch['type'] == 'sanayi') {
             include_once 'api/sanayi.php';
             $code = rand(111111, 999999);
