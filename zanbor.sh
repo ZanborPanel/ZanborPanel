@@ -42,7 +42,7 @@ colorized_echo green "The server was successfully updated . . .\n"
 
 # install packages !
 PACKAGES=(
-    mysql-server  
+    mysql-server 
     libapache2-mod-php 
     lamp-server^ 
     php-mbstring 
@@ -54,6 +54,7 @@ PACKAGES=(
 )
 
 colorized_echo green " Installing the necessary packages. . ."
+
 for i in "${PACKAGES[@]}"
     do
         dpkg -s $i &> /dev/null
