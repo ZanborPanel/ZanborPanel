@@ -85,7 +85,13 @@ do
                 clear
                 echo -e "\n\n"
                 colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Updated"
-                colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
+                colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap\n\n"
+                colorized_echo blue "Your Bot Information:\n"
+                colorized_echo green "token: ${token}"
+                colorized_echo green "admin: ${dev}"
+                colorized_echo green "db_name: ${db_name}"
+                colorized_echo green "db_username: ${db_username}"
+                colorized_echo green "db_password: ${db_password}"
                 echo -e "\n"
 
             else
