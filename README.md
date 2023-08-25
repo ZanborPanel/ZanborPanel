@@ -32,7 +32,7 @@ bash <(curl -s https://raw.githubusercontent.com/ZanborPanel/ZanborPanel/main/za
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/ZanborPanel/ZanborPanel/main/update.sh)
 ```
-- بعد از اجرای این دستور , برای آپدیت دستور `2` را ارسال کنید و سپس `y`
+- بعد از اجرای این دستور , برای آپدیت دستور `3` را ارسال کنید و سپس `y`
 
 ## سوالات متداول
 - **جوین اجباری**: قفل چوین اجباری ربات از طریق پنل مدیریت ربات تنظیم میشه و محدودتی نداره یعنی میتونید تعداد 5 تا هم جوین اجباری ثبت کنید.
