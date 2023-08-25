@@ -60,15 +60,13 @@ do
                 sudo chmod -R 777 /var/www/html/ZanborPanelBot/
                 mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
                 sleep 2
-
-                cat /var/www/html/ZanborPanelBot/install/zanbor.install
+                
                 content=$(cat /var/www/html/ZanborPanelBot/install/zanbor.install)
                 token=$(echo "$content" | jq -r '.token')
                 dev=$(echo "$content" | jq -r '.dev')
                 db_name=$(echo "$content" | jq -r '.db_name')
                 db_username=$(echo "$content" | jq -r '.db_username')
                 db_password=$(echo "$content" | jq -r '.db_password')
-                echo -e "Your Bot Token: ${token}"
 
                 source_file="/var/www/html/ZanborPanelBot/config.php"
                 destination_file="/var/www/html/ZanborPanelBot/config.php.tmp"
@@ -79,7 +77,7 @@ do
                 sleep 2
 
                 TEXT_MESSAGE="🔄 The ZanborPanel Bot Has Been Successfully Updated -> @ZanborPanel | @ZanborPanelGap"
-                curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
+                curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 
                 sleep 2
                 clear
@@ -87,11 +85,11 @@ do
                 colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Updated"
                 colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap\n\n"
                 colorized_echo blue "Your Bot Information:\n"
-                colorized_echo green "token: ${token}"
-                colorized_echo green "admin: ${dev}"
-                colorized_echo green "db_name: ${db_name}"
-                colorized_echo green "db_username: ${db_username}"
-                colorized_echo green "db_password: ${db_password}"
+                colorized_echo green "[+] token: ${token}"
+                colorized_echo green "[+] admin: ${dev}"
+                colorized_echo green "[+] db_name: ${db_name}"
+                colorized_echo green "[+] db_username: ${db_username}"
+                colorized_echo green "[+] db_password: ${db_password}"
                 echo -e "\n"
 
             else
