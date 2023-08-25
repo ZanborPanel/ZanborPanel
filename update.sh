@@ -50,7 +50,7 @@ do
             if [ "$answer" != "${answer#[Yy]}" ]; then
                 colorized_echo green "Please wait, Updating . . ."
                 sudo apt install curl -y
-                slep 2
+                sleep 2
                 mv /var/www/html/ZanborPanelBot/install/zanbor.install /var/www/html/zanbor.install
                 sleep 1
                 rm -r /var/www/html/ZanborPanelBot/
@@ -59,7 +59,8 @@ do
                 sudo chmod -R 777 /var/www/html/ZanborPanelBot/
                 mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
                 sleep 2
-                
+
+                cat /var/www/html/ZanborPanelBot/install/zanbor.install
                 content=$(cat /var/www/html/ZanborPanelBot/install/zanbor.install)
                 token=$(echo "$content" | jq -r '.token')
                 dev=$(grep -oP '(?<="dev": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
