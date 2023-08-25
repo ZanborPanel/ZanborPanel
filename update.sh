@@ -48,50 +48,70 @@ do
             echo -e "\n"
             read -p "Are you sure you want to update? [y/n] : " answer
             if [ "$answer" != "${answer#[Yy]}" ]; then
-                colorized_echo green "Please wait, Updating . . ."
-                sudo apt install curl -y
-                sudo apt-get install jq
-                sleep 2
-                mv /var/www/html/ZanborPanelBot/install/zanbor.install /var/www/html/zanbor.install
-                sleep 1
-                rm -r /var/www/html/ZanborPanelBot/
-                colorized_echo green "All file and folder deleted for update bot !\n"
-                git clone https://github.com/ZanborPanel/ZanborPanel.git /var/www/html/ZanborPanelBot/
-                sudo chmod -R 777 /var/www/html/ZanborPanelBot/
-                mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
-                sleep 2
-                
-                content=$(cat /var/www/html/ZanborPanelBot/install/zanbor.install)
-                token=$(echo "$content" | jq -r '.token')
-                dev=$(echo "$content" | jq -r '.dev')
-                db_name=$(echo "$content" | jq -r '.db_name')
-                db_username=$(echo "$content" | jq -r '.db_username')
-                db_password=$(echo "$content" | jq -r '.db_password')
+                if [ -d "/var/www/html/ZanborPanelBot" ]; then
+                    if [ -f "/var/www/html/ZanborPanelBot/install/zanbor.install" ]; then
+                        if [ -s "/var/www/html/ZanborPanelBot/install/zanbor.install" ]; then
+                            colorized_echo green "Please wait, Updating . . ."
+                            sudo apt install curl -y
+                            sudo apt-get install jq
+                            sleep 2
+                            mv /var/www/html/ZanborPanelBot/install/zanbor.install /var/www/html/zanbor.install
+                            sleep 1
+                            rm -r /var/www/html/ZanborPanelBot/
+                            colorized_echo green "All file and folder deleted for update bot !\n"
+                            git clone https://github.com/ZanborPanel/ZanborPanel.git /var/www/html/ZanborPanelBot/
+                            sudo chmod -R 777 /var/www/html/ZanborPanelBot/
+                            mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
+                            sleep 2
+                            
+                            content=$(cat /var/www/html/ZanborPanelBot/install/zanbor.install)
+                            token=$(echo "$content" | jq -r '.token')
+                            dev=$(echo "$content" | jq -r '.dev')
+                            db_name=$(echo "$content" | jq -r '.db_name')
+                            db_username=$(echo "$content" | jq -r '.db_username')
+                            db_password=$(echo "$content" | jq -r '.db_password')
 
-                source_file="/var/www/html/ZanborPanelBot/config.php"
-                destination_file="/var/www/html/ZanborPanelBot/config.php.tmp"
-                replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${token}/g" -e "s/\[\*DEV\*\]/${dev}/g" -e "s/\[\*DB-NAME\*\]/${db_name}/g" -e "s/\[\*DB-USER\*\]/${db_username}/g" -e "s/\[\*DB-PASS\*\]/${db_password}/g")
-                echo "$replace" > "$destination_file"
-                mv "$destination_file" "$source_file"
+                            source_file="/var/www/html/ZanborPanelBot/config.php"
+                            destination_file="/var/www/html/ZanborPanelBot/config.php.tmp"
+                            replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${token}/g" -e "s/\[\*DEV\*\]/${dev}/g" -e "s/\[\*DB-NAME\*\]/${db_name}/g" -e "s/\[\*DB-USER\*\]/${db_username}/g" -e "s/\[\*DB-PASS\*\]/${db_password}/g")
+                            echo "$replace" > "$destination_file"
+                            mv "$destination_file" "$source_file"
 
-                sleep 2
+                            sleep 2
 
-                TEXT_MESSAGE="🔄 The ZanborPanel Bot Has Been Successfully Updated -> @ZanborPanel | @ZanborPanelGap"
-                curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" -d chat_id="${dev}" -d text="${TEXT_MESSAGE}"
+                            TEXT_MESSAGE="🔄 The ZanborPanel Bot Has Been Successfully Updated -> @ZanborPanel | @ZanborPanelGap"
+                            curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" -d chat_id="${dev}" -d text="${TEXT_MESSAGE}"
 
-                sleep 2
-                clear
-                echo -e "\n\n"
-                colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Updated"
-                colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap\n\n"
-                colorized_echo blue "Your Bot Information:\n"
-                colorized_echo green "[+] token: ${token}"
-                colorized_echo green "[+] admin: ${dev}"
-                colorized_echo green "[+] db_name: ${db_name}"
-                colorized_echo green "[+] db_username: ${db_username}"
-                colorized_echo green "[+] db_password: ${db_password}"
-                echo -e "\n"
-
+                            sleep 2
+                            clear
+                            echo -e "\n\n"
+                            colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Updated"
+                            colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap\n\n"
+                            colorized_echo green "Your Bot Information:\n"
+                            colorized_echo blue "[+] token: ${token}"
+                            colorized_echo blue "[+] admin: ${dev}"
+                            colorized_echo blue "[+] db_name: ${db_name}"
+                            colorized_echo blue "[+] db_username: ${db_username}"
+                            colorized_echo blue "[+] db_password: ${db_password}"
+                            echo -e "\n"
+                        else
+                            echo -e "\n"
+                            colorized_echo red "The zanbor.install file is empty!"
+                            echo -e "\n"
+                            exit 1
+                        fi
+                    else
+                        echo -e "\n"
+                        colorized_echo red "The zanbor.install file was not found and the update process was canceled!"
+                        echo -e "\n"
+                        exit 1
+                    fi
+                else
+                    echo -e "\n"
+                    colorized_echo red "The ZanborPanelBot folder was not found for the update process, install the bot first!"
+                    echo -e "\n"
+                    exit 1
+                fi
             else
                 echo -e "\n"
                 colorized_echo red "Update Canceled !"
@@ -104,20 +124,26 @@ do
             echo -e "\n"
             read -p "Are you sure you want to update? [y/n] : " answer
             if [ "$answer" != "${answer#[Yy]}" ]; then
-                colorized_echo green "Please wait, Deleting . . ."
-                rm -r /var/www/html/ZanborPanelBot/
+                if [ -d "/var/www/html/ZanborPanelBot" ]; then
+                    colorized_echo green "Please wait, Deleting . . ."
+                    rm -r /var/www/html/ZanborPanelBot/
 
-                sleep 2
+                    sleep 2
 
-                TEXT_MESSAGE="❌ The ZanborPanel Bot Has Been Successfully Deleted -> @ZanborPanel | @ZanborPanelGap"
-                curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
+                    TEXT_MESSAGE="❌ The ZanborPanel Bot Has Been Successfully Deleted -> @ZanborPanel | @ZanborPanelGap"
+                    curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 
-                sleep 2
-                echo -e "\n"
-                colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Deleted"
-                colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
-                echo -e "\n"
-
+                    sleep 2
+                    echo -e "\n"
+                    colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Deleted"
+                    colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
+                    echo -e "\n"
+                else
+                    echo -e "\n"
+                    colorized_echo red "The ZanborPanelBot folder was not found for the update process, install the bot first!"
+                    echo -e "\n"
+                    exit 1
+                fi
             else
                 echo -e "\n"
                 colorized_echo red "Delete Canceled !"
