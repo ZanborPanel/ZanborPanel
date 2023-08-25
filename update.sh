@@ -60,6 +60,7 @@ do
                 mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
                 sleep 2
 
+                cat /var/www/html/ZanborPanelBot/install/zanbor.install
                 token=$(grep -oP '(?<="token": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 dev=$(grep -oP '(?<="dev": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 db_name=$(grep -oP '(?<="db_name": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
