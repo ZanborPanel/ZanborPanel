@@ -77,7 +77,7 @@ do
                 sleep 2
 
                 TEXT_MESSAGE="🔄 The ZanborPanel Bot Has Been Successfully Updated -> @ZanborPanel | @ZanborPanelGap"
-                curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
+                curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" -d chat_id="${dev}" -d text="${TEXT_MESSAGE}"
 
                 sleep 2
                 clear
