@@ -59,9 +59,9 @@ do
                 sudo chmod -R 777 /var/www/html/ZanborPanelBot/
                 mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
                 sleep 2
-
-                cat /var/www/html/ZanborPanelBot/install/zanbor.install
-                token=$(grep -oP '(?<="token": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
+                
+                content=$(cat /var/www/html/ZanborPanelBot/install/zanbor.install)
+                token=$(echo "$content" | grep -oP '(?<="token": ")[^"]*')
                 dev=$(grep -oP '(?<="dev": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 db_name=$(grep -oP '(?<="db_name": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
                 db_username=$(grep -oP '(?<="db_username": ")[^"]*' /var/www/html/ZanborPanelBot/install/zanbor.install)
