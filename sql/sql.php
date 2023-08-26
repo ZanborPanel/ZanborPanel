@@ -124,7 +124,7 @@ mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `test_account` (
     `location` varchar(50) COLLATE utf8mb4_bin NOT NULL,
     `date` varchar(20) COLLATE utf8mb4_bin NOT NULL,
     `volume` varchar(20) COLLATE utf8mb4_bin NOT NULL,
-    `link` varchar(500) COLLATE utf8mb4_bin NOT NULL,
+    `link` TEXT COLLATE utf8mb4_bin NOT NULL,
     `price` varchar(20) COLLATE utf8mb4_bin NOT NULL,
     `code` varchar(20) COLLATE utf8mb4_bin NOT NULL,
     `status` varchar(15) COLLATE utf8mb4_bin NOT NULL
@@ -165,4 +165,3 @@ if ($sql->connect_error) {
 } else {
     echo json_encode(['status' => true, 'msg' => 'The database operation was completed successfully.', 'status_code' => 200], 448);
 }
-
