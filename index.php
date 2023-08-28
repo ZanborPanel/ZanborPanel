@@ -189,7 +189,7 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
             $getMe = json_decode(file_get_contents("https://api.telegram.org/bot{$config['token']}/getMe"), true);
             $subscribe = $panel['login_link'] . $create_status['subscription_url'];
             if ($panel['qr_code'] == 'active') {
-                $encode_url = urlencode($create_status['links'][0]);
+                $encode_url = urlencode($subscribe);
                 bot('sendPhoto', ['chat_id' => $from_id, 'photo' => "https://api.qrserver.com/v1/create-qr-code/?data=$encode_url&size=800x800", 'caption' => sprintf($texts['success_create_service'], $name, $location, $date, $limit, number_format($price), $subscribe, '@' . $getMe['result']['username']), 'parse_mode' => 'html', 'reply_markup' => $start_key]);
             } else {
                 sendmessage($from_id, sprintf($texts['success_create_service'], $name, $location, $date, $limit, number_format($price), $subscribe, '@' . $getMe['result']['username']), $start_key);
