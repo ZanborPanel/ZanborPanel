@@ -203,6 +203,8 @@ if [ -f "$config_address" ]; then
 fi
 
 clear
+echo -e "\n\n"
+colorized_echo green " [+] Please wait . . ."
 sleep 1
 
 # add information to file
@@ -218,13 +220,17 @@ mv "$destination_file" "$source_file"
 sleep 2
 
 # curl process
+colorized_echo blue "Database status: \n"
 curl --location "https://${DOMAIN}/ZanborPanelBot/sql/sql.php?db_password=${dbpass}&db_name=${dbname}&db_username=${dbuser}"
+echo -e "\n\n"
 
 curl -F "url=https://${DOMAIN}/ZanborPanelBot/index.php" "https://api.telegram.org/bot${TOKEN}/setWebhook"
 
+colorized_echo blue "Send message status: \n"
 TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed -> @ZanborPanel | @ZanborPanelGap"
 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
+echo -e "\n\n"
 
-sleep 2
+sleep 1
 colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Installed"
 colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
