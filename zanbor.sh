@@ -202,6 +202,7 @@ if [ -f "$config_address" ]; then
     rm "$config_address"
 fi
 
+clear
 sleep 1
 
 # add information to file
@@ -225,6 +226,5 @@ TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed -> @Zanbor
 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 
 sleep 2
-clear
 colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Installed"
 colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap"
