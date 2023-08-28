@@ -82,6 +82,9 @@ sudo systemctl restart apache2
 
 wait
 
+sudo apt-get install -y php-soap
+sudo apt-get install libapache2-mod-php
+
 # service proccessing !
 sudo systemctl enable mysql.service
 sudo systemctl start mysql.service
