@@ -220,13 +220,13 @@ mv "$destination_file" "$source_file"
 sleep 2
 
 # curl process
-colorized_echo blue "Database status:"
+colorized_echo blue "Database Status:"
 curl --location "https://${DOMAIN}/ZanborPanelBot/sql/sql.php?db_password=${dbpass}&db_name=${dbname}&db_username=${dbuser}"
 
-colorized_echo blue "\n\nSet webhook status:"
+colorized_echo blue "\n\nSet Webhook Status:"
 curl -F "url=https://${DOMAIN}/ZanborPanelBot/index.php" "https://api.telegram.org/bot${TOKEN}/setWebhook"
 
-colorized_echo blue "\n\nSend message status:"
+colorized_echo blue "\n\nSend Message Status:"
 TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed -> @ZanborPanel | @ZanborPanelGap"
 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 echo -e "\n\n"
