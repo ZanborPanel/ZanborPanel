@@ -125,7 +125,7 @@ do
             read -p "Are you sure you want to update? [y/n] : " answer
             if [ "$answer" != "${answer#[Yy]}" ]; then
                 if [ -d "/var/www/html/ZanborPanelBot" ]; then
-                    colorized_echo green "Please wait, Deleting . . ."
+                    colorized_echo green "\n[+] Please wait, Deleting . . .\n"
                     rm -r /var/www/html/ZanborPanelBot/
 
                     sleep 2
