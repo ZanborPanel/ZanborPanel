@@ -263,7 +263,7 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
                 if (isset($create_status['username'])) {
                     $links = "";
                     foreach ($create_status['links'] as $link) $links .= $link . "\n\n";
-                    $subscribe = $panel_fetch['login_link'] . $create_status['subscription_url'];
+		    $subscribe = (strpos($create_status['subscription_url'], 'http') !== false) ? $create_status['subscription_url'] : $panel_fetch['login_link'] . $create_status['subscription_url'];
                     $sql->query("UPDATE `users` SET `count_service` = count_service + 1, `test_account` = 'yes' WHERE `from_id` = '$from_id'");
                     $sql->query("INSERT INTO `test_account` (`from_id`, `location`, `date`, `volume`, `link`, `price`, `code`, `status`) VALUES ('$from_id', '{$panel_fetch['name']}', '{$test_account_setting['date']}', '{$test_account_setting['volume']}', '$links', '0', '$code', 'active')");
                     deleteMessage($from_id, $message_id + 1);
@@ -327,14 +327,15 @@ elseif ($text == '🛍 سرویس های من' or $data == 'back_services') {
 }
 
 elseif (strpos($data, 'service_status-') !== false) {
-	$code = explode('-', $data)[1];
-	$getService = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
-	$panel = $sql->query("SELECT * FROM `panels` WHERE `name` = '{$getService['location']}'")->fetch_assoc();
+    $code = explode('-', $data)[1];
+    $getService = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
+    $panel = $sql->query("SELECT * FROM `panels` WHERE `name` = '{$getService['location']}'")->fetch_assoc();
     if ($panel['type'] == 'marzban') {
-	    $getUser = getUserInfo(base64_encode($code) . '_' . $from_id, $panel['token'], $panel['login_link']);
+	$getUser = getUserInfo(base64_encode($code) . '_' . $from_id, $panel['token'], $panel['login_link']);
         if (isset($getUser['links']) and $getUser != false) {
             $links = implode("\n\n", $getUser['links']) ?? 'NULL';
-            editMessage($from_id, sprintf($texts['your_service'], ($getUser['status'] == 'active') ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['used_traffic'], 'GB'), Conversion($getUser['data_limit'], 'GB'), date('Y-d-m H:i:s',  $getUser['expire']), $links), $message_id, $back_services);
+	    $subscribe = (strpos($getUser['subscription_url'], 'http') !== false) ? $getUser['subscription_url'] : $panel['login_link'] . $getUser['subscription_url'];
+            editMessage($from_id, sprintf($texts['your_service'], ($getUser['status'] == 'active') ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['used_traffic'], 'GB'), Conversion($getUser['data_limit'], 'GB'), date('Y-d-m H:i:s',  $getUser['expire']), $subscribe), $message_id, $back_services);
         } else {
             alert('❌ سرویسی با این مشخصات یافت نشد.');
         }
