@@ -19,7 +19,7 @@ function request($url) {
 if (isset($_POST['token']) and isset($_POST['admin-id']) and isset($_POST['db-name']) and isset($_POST['db-user']) and isset($_POST['db-pass']) and isset($_POST['install_location'])) {
 	if (!file_exists('zanbor.install')) {
 		if (file_exists('../config.php') and file_exists('../index.php') and file_exists('../texts.json') and file_exists('../sql/sql.php')) {
-		    $domain = ($_POST['install_location'] == 'host') ? 'https://' . $_SERVER['HTTP_HOST'] . '/' . explode('/', explode('public_html/', $_SERVER['SCRIPT_FILENAME'])[1])[0] : 'https://' . $_SERVER['HTTP_HOST'] . '/' . explode('/', explode('html/', $_SERVER['SCRIPT_FILENAME'])[1])[0];
+		    $domain = 'https://' . $_SERVER['HTTP_HOST'] . '/' . explode('/', explode('public_html/', $_SERVER['SCRIPT_FILENAME'])[1])[0];
 		    
 			$getTokenStatus = json_decode(request('https://api.telegram.org/bot' . $_POST['token'] . '/getMe'), true)['ok'];
 			if ($getTokenStatus == true) {
