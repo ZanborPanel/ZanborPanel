@@ -681,7 +681,9 @@ if ($from_id == $config['dev'] or in_array($from_id, $sql->query("SELECT * FROM 
         step('add_server_select');
         sendMessage($from_id, "ℹ️ قصد اضافه کردن کدام یک از پنل های زیر را دارید ؟", $select_panel);
     }
-    
+
+    # ------------- sanayi ------------- #
+
     elseif ($data == 'sanayi') {
         step('add_server_sanayi');
         deleteMessage($from_id, $message_id);
