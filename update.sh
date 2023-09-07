@@ -85,7 +85,6 @@ do
 
                             sleep 2
                             clear
-                            
                             echo -e "\n\n"
                             colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Updated"
                             colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap\n\n"
