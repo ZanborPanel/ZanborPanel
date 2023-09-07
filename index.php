@@ -511,7 +511,8 @@ elseif (strpos($data, 'edu') !== false) {
 }
 # ------------ panel ------------ #
 
-if ($from_id == $config['dev'] or in_array($from_id, $sql->query("SELECT * FROM `admins`")->fetch_assoc() ?? [])) {
+$admins = $sql->query("SELECT * FROM `admins`")->fetch_assoc() ?? [];
+if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     if (in_array($text, ['/panel', 'panel', '🔧 مدیریت', 'پنل', '⬅️ بازگشت به مدیریت'])) {
         step('panel');
         sendMessage($from_id, "👮‍♂️ - سلام ادمین [ <b>$first_name</b> ] عزیز !\n\n⚡️به پنل مدیریت ربات خوش آمدید.\n🗃 ورژن فعلی ربات : <code>{$config['version']}</code>\n\n⚙️ جهت مدیریت ربات ، یکی از گزینه های زیر را انتخاب کنید.\n\n🐝 | برای اطلاع از تمامی آپدیت ها و نسخه های بعدی ربات زنبور پنل در کانال زنبور پنل عضو شید :↓\n◽️@ZanborPanel\n🐝 و همچنین برای نظر دهی آپدیت یا باگ ها به گروه زنبور پنل بپیوندید :↓\n◽️@ZanborPanelGap", $panel);    
