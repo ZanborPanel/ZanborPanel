@@ -58,7 +58,8 @@ do
                             mv /var/www/html/ZanborPanelBot/install/zanbor.install /var/www/html/zanbor.install
                             sleep 1
                             rm -r /var/www/html/ZanborPanelBot/
-                            colorized_echo green "All file and folder deleted for update bot !\n"
+                            colorized_echo green "\nAll file and folder deleted for update bot . . .\n"
+
                             git clone https://github.com/ZanborPanel/ZanborPanel.git /var/www/html/ZanborPanelBot/
                             sudo chmod -R 777 /var/www/html/ZanborPanelBot/
                             mv /var/www/html/zanbor.install /var/www/html/ZanborPanelBot/install/zanbor.install
@@ -84,6 +85,7 @@ do
 
                             sleep 2
                             clear
+                            
                             echo -e "\n\n"
                             colorized_echo green "[+] The ZanborPanel Bot Has Been Successfully Updated"
                             colorized_echo green "[+] Telegram channel: @ZanborPanel || Telegram group: @ZanborPanelGap\n\n"

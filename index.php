@@ -175,7 +175,8 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
     }
     # ---------------- create service proccess ---------------- #
     if ($panel['type'] == 'marzban') {
-        $create_service = createService($name, convertToBytes($limit.'GB'), strtotime("+ $date day"), $proxies, $panel['token'], $panel['login_link']);
+        $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
+        $create_service = createService($name, convertToBytes($limit.'GB'), strtotime("+ $date day"), $proxies, $token, $panel['login_link']);
         $create_status = json_decode($create_service, true);
         # ---------------- check errors ---------------- #
         if (!isset($create_status['username'])) {
