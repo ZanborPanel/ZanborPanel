@@ -211,8 +211,8 @@ sleep 1
 # touch('/var/www/html/ZanborPanelBot/install/zanbor.install')
 echo "{\"development\":\"@ZanborPanel\",\"install_location\":\"server\",\"main_domin\":\"${DOMAIN}\",\"token\":\"${TOKEN}\",\"dev\":\"${CHAT_ID}\",\"db_name\":\"${dbname}\",\"db_username\":\"${randdbdb}\",\"db_password\":\"${randdbpass}\"}" > /var/www/html/ZanborPanelBot/install/zanbor.install
 
-source_file="../var/www/html/ZanborPanelBot/config.php"
-destination_file="../var/www/html/ZanborPanelBot/config.php.tmp"
+source_file="/var/www/html/ZanborPanelBot/config.php"
+destination_file="/var/www/html/ZanborPanelBot/config.php.tmp"
 replace=$(cat "$source_file" | sed -e "s/\[\*TOKEN\*\]/${TOKEN}/g" -e "s/\[\*DEV\*\]/${CHAT_ID}/g" -e "s/\[\*DB-NAME\*\]/${dbname}/g" -e "s/\[\*DB-USER\*\]/${dbuser}/g" -e "s/\[\*DB-PASS\*\]/${dbpass}/g")
 echo "$replace" > "$destination_file"
 mv "$destination_file" "$source_file"
