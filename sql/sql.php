@@ -82,6 +82,24 @@ mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `category` (
     `status` varchar(15) COLLATE utf8mb4_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
 
+mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `category_limit` (
+    `row` int(200) AUTO_INCREMENT PRIMARY KEY,
+    `limit` varchar(20) COLLATE utf8mb4_bin NOT NULL,
+    `name` varchar(100) COLLATE utf8mb4_bin NOT NULL,
+    `price` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+    `code` varchar(20) COLLATE utf8mb4_bin NOT NULL,
+    `status` varchar(15) COLLATE utf8mb4_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
+
+mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `category_date` (
+    `row` int(200) AUTO_INCREMENT PRIMARY KEY,
+    `date` varchar(20) COLLATE utf8mb4_bin NOT NULL,
+    `name` varchar(100) COLLATE utf8mb4_bin NOT NULL,
+    `price` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+    `code` varchar(20) COLLATE utf8mb4_bin NOT NULL,
+    `status` varchar(15) COLLATE utf8mb4_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
+
 mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `service_factors` (
     `row` int(200) AUTO_INCREMENT PRIMARY KEY,
     `from_id` varchar(20) COLLATE utf8mb4_bin NOT NULL,
