@@ -260,7 +260,7 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
                 # ---------------------------------------------- #
                 $code = rand(111111, 999999);
                 $name = base64_encode($code) . '_' . $from_id;
-                $create_service = createService($name, convertToBytes($test_account_setting['volume'].'GB'), strtotime("+ {$test_account_setting['time']} day"), $proxies, $panel_fetch['token'], $panel_fetch['login_link']);
+                $create_service = createService($name, convertToBytes($test_account_setting['volume'].'GB'), strtotime("+ {$test_account_setting['time']} hour"), $proxies, $panel_fetch['token'], $panel_fetch['login_link']);
                 $create_status = json_decode($create_service, true);
                 if (isset($create_status['username'])) {
                     $links = "";
