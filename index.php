@@ -1607,8 +1607,36 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         ]]);
         editmessage($from_id, "🌐 اطلاعات پلن با موفقیت دریافت شد.\n\n▫️نام پلن : <b>{$res['name']}</b>\n▫️حجم : <code>{$res['limit']}</code>\n▫️تاریخ : <code>{$res['date']}</code>\n▫️قیمت : <code>{$res['price']}</code>\n\n📎 با کلیک بر روی هر کدام میتوانید مقدار آن را تغییر دهید !", $message_id, $key);
     }
+
+    elseif (strpos($data, 'manage_cat_date-') !== false) {
+        $code = explode('-', $data)[1];
+        $res = $sql->query("SELECT * FROM `category_date` WHERE `code` = '$code'")->fetch_assoc();
+        $key = json_encode(['inline_keyboard' => [
+            [['text' => 'تاریخ', 'callback_data' => 'null'], ['text' => 'قیمت', 'callback_data' => 'null'], ['text' => 'نام', 'callback_data' => 'null']],
+            [['text' => $res['date'], 'callback_data' => 'change_date_date-'.$res['code']], ['text' => $res['price'], 'callback_data' => 'change_price_date-'.$res['code']], ['text' => '✏️', 'callback_data' => 'change_name_date-'.$res['code']]],
+            [['text' => '⬅️ بازگشت', 'callback_data' => 'back_cat']],
+        ]]);
+        editmessage($from_id, "🌐 اطلاعات پلن با موفقیت دریافت شد.\n\n▫️نام پلن : <b>{$res['name']}</b>\n▫️تاریخ : <code>{$res['date']}</code>\n▫️قیمت : <code>{$res['price']}</code>\n\n📎 با کلیک بر روی هر کدام میتوانید مقدار آن را تغییر دهید !", $message_id, $key);
+    }
+
+    elseif (strpos($data, 'manage_cat_limit-') !== false) {
+        $code = explode('-', $data)[1];
+        $res = $sql->query("SELECT * FROM `category_limit` WHERE `code` = '$code'")->fetch_assoc();
+        $key = json_encode(['inline_keyboard' => [
+            [['text' => 'حجم', 'callback_data' => 'null'], ['text' => 'قیمت', 'callback_data' => 'null'], ['text' => 'نام', 'callback_data' => 'null']],
+            [['text' => $res['limit'], 'callback_data' => 'change_limit_limit-'.$res['code']], ['text' => $res['price'], 'callback_data' => 'change_price_limit-'.$res['code']], ['text' => '✏️', 'callback_data' => 'change_name_limit-'.$res['code']]],
+            [['text' => '⬅️ بازگشت', 'callback_data' => 'back_cat']],
+        ]]);
+        editmessage($from_id, "🌐 اطلاعات پلن با موفقیت دریافت شد.\n\n▫️نام پلن : <b>{$res['name']}</b>\n▫️حجم : <code>{$res['limit']}</code>\n▫️قیمت : <code>{$res['price']}</code>\n\n📎 با کلیک بر روی هر کدام میتوانید مقدار آن را تغییر دهید !", $message_id, $key);
+    }
     
     elseif (strpos($data, 'change_date-') !== false) {
+        $code = explode('-', $data)[1];
+        step('change_date-'.$code);
+        sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
+    }
+
+    elseif (strpos($data, 'change_date_date-') !== false) {
         $code = explode('-', $data)[1];
         step('change_date-'.$code);
         sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
@@ -1619,14 +1647,44 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         step('change_limit-'.$code);
         sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
     }
+
+    elseif (strpos($data, 'change_limit_limit-') !== false) {
+        $code = explode('-', $data)[1];
+        step('change_limit-'.$code);
+        sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
+    }
     
     elseif (strpos($data, 'change_price-') !== false) {
         $code = explode('-', $data)[1];
         step('change_price-'.$code);
         sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
     }
+
+    elseif (strpos($data, 'change_price_date-') !== false) {
+        $code = explode('-', $data)[1];
+        step('change_price-'.$code);
+        sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
+    }
+
+    elseif (strpos($data, 'change_price_limit-') !== false) {
+        $code = explode('-', $data)[1];
+        step('change_price-'.$code);
+        sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
+    }
     
     elseif (strpos($data, 'change_name-') !== false) {
+        $code = explode('-', $data)[1];
+        step('change_namee-'.$code);
+        sendMessage($from_id, "🔰نام جدید را ارسال کنید :", $back_panel);
+    }
+
+    elseif (strpos($data, 'change_name_date-') !== false) {
+        $code = explode('-', $data)[1];
+        step('change_namee-'.$code);
+        sendMessage($from_id, "🔰نام جدید را ارسال کنید :", $back_panel);
+    }
+
+    elseif (strpos($data, 'change_name_limit-') !== false) {
         $code = explode('-', $data)[1];
         step('change_namee-'.$code);
         sendMessage($from_id, "🔰نام جدید را ارسال کنید :", $back_panel);
