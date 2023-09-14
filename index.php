@@ -446,7 +446,7 @@ elseif (strpos($data, 'buy_extra_time') !== false) {
 
     if ($category_date->num_rows > 0) {
         while ($row = $category_date->fetch_assoc()) {
-            $key[] = ['text' => $row['name'], 'callback_data' => 'select_extra_time-'.$row['code']];
+            $key[] = ['text' => $row['name'], 'callback_data' => 'select_extra_time-'.$row['code'].'-'.$code];
         }
         $key = array_chunk($key, 2);
         $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'service_status-'.$code]];
@@ -464,7 +464,7 @@ elseif (strpos($data, 'buy_extra_volume') !== false) {
 
     if ($category_limit->num_rows > 0) {
         while ($row = $category_limit->fetch_assoc()) {
-            $key[] = ['text' => $row['name'], 'callback_data' => 'select_extra_volume-'.$row['code']];
+            $key[] = ['text' => $row['name'], 'callback_data' => 'select_extra_volume-'.$row['code'].'-'.$code];
         }
         $key = array_chunk($key, 2);
         $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'service_status-'.$code]];
@@ -473,6 +473,30 @@ elseif (strpos($data, 'buy_extra_volume') !== false) {
     } else {
         alert('❌ پلنی برای خرید حجم اضافه یافت نشد.', true);
     }
+}
+
+elseif ($data == 'cancel_buy_extra_time') {
+    step('none');
+    deleteMessage($from_id, $message_id);
+    sendMessage($from_id, "❌ فاکتور شما با موفقیت لغو شد.", $start_key);
+}
+
+elseif (strpos($data, 'select_extra_time') !== false) {
+    $service_code = explode('-', $data)[2];
+    $plan_code = explode('-', $data)[1];
+    $service = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'");
+    $plan = $sql->query("SELECT * FROM `category_date` WHERE `code` = '$plan_code'");
+    
+    $access_key = json_encode(['inline_keyboard' => [
+        [['text' => '❌ لغو', 'callback_data' => 'cancel_buy_extra_time'], ['text' => '', 'callback_data' => 'confirm_extra_time-'.$service_code]],
+    ]]);
+    
+    editMessage($from_id, "🟢 فاکتور افزایش اعتبار زمانی شما برای سرویس با کد پیگیری <code>$code</code> ساخته شد.\n\n▫️سرویس انتخابی : <code>$code</code>\n▫️پلن انتخابی : <b>{$plan['name']}</b>\n▫️قیمت فاکتور : <code>{$plan['price']}</code>\n\nℹ️ در صورت تایید و افزایش اعتبار زمانی سرویس <code>$code</code> بر روی دکمه [ <b>✅ تایید</b> ] کلیک کنید و در غیر این صورت بر روی دکمه [ <b>❌ لغو</b> ] کلیک کنید.", $message_id, $access_key);
+}
+
+elseif (strpos($data, 'select_extra_volume') !== false) {
+    $service_code = explode('-', $data)[2];
+    $plan_code = explode('-', $data)[1];
 }
 
 elseif ($text == '💸 شارژ حساب') {
