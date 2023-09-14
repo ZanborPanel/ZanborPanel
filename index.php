@@ -446,11 +446,11 @@ elseif (strpos($data, 'buy_extra_time') !== false) {
 
     if ($category_date->num_rows > 0) {
         while ($row = $category_date->fetch_assoc()) {
-            $key[] = ['text' => $row['name'], 'callback_data' => 'select-'.$row['code']];
+            $key[] = ['text' => $row['name'], 'callback_data' => 'select_extra_time-'.$row['code']];
         }
         $key = array_chunk($key, 2);
         $key = json_encode(['inline_keyboard' => $key]);
-        editMessage($from_id, "select :", $key);
+        editMessage($from_id, "select below plans for buy extra time: ", $message_id, $key);
     } else {
         alert('❌ پلنی برای افزایش اعتبار زمانی یافت نشد.', true);
     }
@@ -991,7 +991,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         step('none');
         $info = explode("\n", file_get_contents('add_plan_date.txt'));
         $code = rand(1111111, 9999999);
-        $sql->query("INSERT INTO `category_date` (`limit`, `name`, `price`, `code`, `status`) VALUES ('{$info[1]}', '{$info[0]}', '$text', '$code', 'active')");
+        $sql->query("INSERT INTO `category_date` (`date`, `name`, `price`, `code`, `status`) VALUES ('{$info[1]}', '{$info[0]}', '$text', '$code', 'active')");
         sendmessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت و به لیست اضافه شد.\n\n◽حجم ارسالی : <code>{$info[1]}</code>\n◽قیمت ارسالی : <code>$text</code>", $manage_server);
         if (file_exists('add_plan_date.txt')) unlink('add_plan_date.txt');
     }
