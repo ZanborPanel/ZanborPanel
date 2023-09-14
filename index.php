@@ -2055,7 +2055,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         sendMessage($from_id, "⚙️️ به تنظیمات متون ربات خوش آمدید.\n\n👇🏻یکی از گزینه های زیر را انتخاب کنید :", $manage_texts);
     }
     
-    elseif ($text == 'متن استارت') {
+    elseif ($text == '✏️ متن استارت') {
         step('set_start_text');
         sendMessage($from_id, "👇 متن استارت را ارسال کنید :", $back_panel);
     }
@@ -2068,7 +2068,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         sendMessage($from_id, "✅ متن استارت با موفقیت تنظیم شد !", $manage_texts);
     }
     
-    elseif ($text == 'متن تعرفه خدمات') {
+    elseif ($text == '✏️ متن تعرفه خدمات') {
         step('set_tariff_text');
         sendMessage($from_id, "👇 متن تعرفه خدمات را ارسال کنید :", $back_panel);
     }
@@ -2079,6 +2079,16 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         ', '\n', $text);
         file_put_contents('texts.json', json_encode($texts));
         sendMessage($from_id, "✅ متن تعرفه خدمات با موفقیت تنظیم شد !", $manage_text);
+    }
+
+    elseif ($text == '✏️ متن راهنمای اتصال') {
+        step('none');
+        sendMessage($from_id, "✏️ قصد تنظیم کدوم قسمت راهنمای اتصال را دارید ؟\n\n👇 یکی از گزینه های زیر را انتخاب کنید :", $set_text_edu);
+    }
+
+    elseif (strpos($data, 'set_edu_') !== false) {
+        $sys = explode('_', $data)[2];
+        sendMessage($from_id, $sys);
     }
     
     // -----------------manage admins ----------------- //
