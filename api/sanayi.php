@@ -243,6 +243,10 @@ class Sanayi{
     public function addExpire($remark, $date, $id) {
         return 'ok';
     }
+
+    public function addVolume($remark, $limit, $id) {
+        return 'ok';
+    }
     
 }
 

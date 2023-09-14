@@ -521,6 +521,7 @@ elseif (strpos($data, 'confirm_extra_time') !== false) {
             }
         }
 
+        $sql->query("UPDATE `users` SET `coin` = coin - {$plan['price']} WHERE `from_id` = '$from_id'");
         deleteMessage($from_id, $message_id);
         sendMessage($from_id, sprintf($texts['success_extra_time'], $plan['date'], $plan['name'], number_format($plan['price'])), $start_key);
     } else {
@@ -562,12 +563,13 @@ elseif (strpos($data, 'confirm_extra_volume') !== false) {
             $getUser = $xui->getUserInfo(base64_encode($code) . '_' . $from_id, $panel_setting['inbound_id']);
             $getUser = json_decode($getUser, true);
             if ($getUser['status'] == true) {
-                $response = $xui->addExpire(base64_encode($service_code) . '_' . $from_id, $plan['date'], $panel_setting['inbound_id']);
+                $response = $xui->addVolume(base64_encode($service_code) . '_' . $from_id, $plan['limit'], $panel_setting['inbound_id']);
             } else {
                 alert('❌ Error --> not found service');
             }
         }
 
+        $sql->query("UPDATE `users` SET `coin` = coin - {$plan['price']} WHERE `from_id` = '$from_id'");
         deleteMessage($from_id, $message_id);
         sendMessage($from_id, sprintf($texts['success_extra_volume'], $plan['limit'], $plan['name'], number_format($plan['price'])), $start_key);
     } else {
