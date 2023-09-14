@@ -1141,7 +1141,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     }
 
     elseif ($data == 'manage_main_plan') {
-        step('manage_limit');
+        step('manage_main_plan');
         $count = $sql->query("SELECT * FROM `category`")->num_rows;
         if ($count == 0) {
             if(isset($data)){
@@ -1161,6 +1161,62 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         $button = json_encode(['inline_keyboard' => $button]);
         $count = $result->num_rows;
         $count_active = $sql->query("SELECT * FROM `category` WHERE `status` = 'active'")->num_rows;
+        if (isset($data)) {
+            editmessage($from_id, "🔰لیست دسته بندی های شما به شرح زیر است :\n\n🔢 تعداد کل : <code>$count</code> عدد\n🔢 تعداد کل لیست فعال : <code>$count_active</code>  عدد", $message_id, $button);
+        }else{
+            sendMessage($from_id, "🔰لیست دسته بندی های شما به شرح زیر است :\n\n🔢 تعداد کل : <code>$count</code> عدد\n🔢 تعداد کل لیست فعال : <code>$count_active</code>  عدد", $button);
+        }
+    }
+
+    elseif ($data == 'manage_limit_plan') {
+        step('manage_limit_plan');
+        $count = $sql->query("SELECT * FROM `category_limit`")->num_rows;
+        if ($count == 0) {
+            if(isset($data)){
+                editmessage($from_id, "❌ لیست پلن ها خالی است.", $message_id);
+                exit();
+            } else {
+                sendmessage($from_id, "❌ لیست پلن ها خالی است.", $manage_server);
+                exit();
+            }
+        }
+        $result = $sql->query("SELECT * FROM `category_limit`");
+        $button[] = [['text' => 'حذف', 'callback_data' => 'null'], ['text' => 'وضعیت', 'callback_data' => 'null'], ['text' => 'نام', 'callback_data' => 'null'], ['text' => 'اطلاعات', 'callback_data' => 'null']];
+        while ($row = $result->fetch_array()) {
+            $status = $row['status'] == 'active' ? '✅' : '❌';
+            $button[] = [['text' => '🗑', 'callback_data' => 'delete_limit-'.$row['code']], ['text' => $status, 'callback_data' => 'change_status_cat-'.$row['code']], ['text' => $row['name'], 'callback_data' => 'manage_list-'.$row['code']], ['text' => '👁', 'callback_data' => 'manage_cat-'.$row['code']]];
+        }
+        $button = json_encode(['inline_keyboard' => $button]);
+        $count = $result->num_rows;
+        $count_active = $sql->query("SELECT * FROM `category_limit` WHERE `status` = 'active'")->num_rows;
+        if (isset($data)) {
+            editmessage($from_id, "🔰لیست دسته بندی های شما به شرح زیر است :\n\n🔢 تعداد کل : <code>$count</code> عدد\n🔢 تعداد کل لیست فعال : <code>$count_active</code>  عدد", $message_id, $button);
+        }else{
+            sendMessage($from_id, "🔰لیست دسته بندی های شما به شرح زیر است :\n\n🔢 تعداد کل : <code>$count</code> عدد\n🔢 تعداد کل لیست فعال : <code>$count_active</code>  عدد", $button);
+        }
+    }
+
+    elseif ($data == 'manage_date_plan') {
+        step('manage_date_plan');
+        $count = $sql->query("SELECT * FROM `category_date`")->num_rows;
+        if ($count == 0) {
+            if(isset($data)){
+                editmessage($from_id, "❌ لیست پلن ها خالی است.", $message_id);
+                exit();
+            } else {
+                sendmessage($from_id, "❌ لیست پلن ها خالی است.", $manage_server);
+                exit();
+            }
+        }
+        $result = $sql->query("SELECT * FROM `category_date`");
+        $button[] = [['text' => 'حذف', 'callback_data' => 'null'], ['text' => 'وضعیت', 'callback_data' => 'null'], ['text' => 'نام', 'callback_data' => 'null'], ['text' => 'اطلاعات', 'callback_data' => 'null']];
+        while ($row = $result->fetch_array()) {
+            $status = $row['status'] == 'active' ? '✅' : '❌';
+            $button[] = [['text' => '🗑', 'callback_data' => 'delete_limit-'.$row['code']], ['text' => $status, 'callback_data' => 'change_status_cat-'.$row['code']], ['text' => $row['name'], 'callback_data' => 'manage_list-'.$row['code']], ['text' => '👁', 'callback_data' => 'manage_cat-'.$row['code']]];
+        }
+        $button = json_encode(['inline_keyboard' => $button]);
+        $count = $result->num_rows;
+        $count_active = $sql->query("SELECT * FROM `category_date` WHERE `status` = 'active'")->num_rows;
         if (isset($data)) {
             editmessage($from_id, "🔰لیست دسته بندی های شما به شرح زیر است :\n\n🔢 تعداد کل : <code>$count</code> عدد\n🔢 تعداد کل لیست فعال : <code>$count_active</code>  عدد", $message_id, $button);
         }else{
