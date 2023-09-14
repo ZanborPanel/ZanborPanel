@@ -341,9 +341,9 @@ elseif (strpos($data, 'service_status-') !== false) {
             $subscribe = (strpos($getUser['subscription_url'], 'http') !== false) ? $getUser['subscription_url'] : $panel['login_link'] . $getUser['subscription_url'];
 
             $manage_service_btns = json_encode(['inline_keyboard' => [    
-                [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code]],
-                [['text' => 'خرید حجم اضافه', 'callback_data' => 'buy_extra_volume-'.$code], ['text' => 'افزایش اعتبار زمانی', 'callback_data' => 'buy_extra_time-'.$code]],
-                [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code]],
+                [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code.'-marzban']],
+                [['text' => 'خرید حجم اضافه', 'callback_data' => 'buy_extra_volume-'.$code.'-marzban'], ['text' => 'افزایش اعتبار زمانی', 'callback_data' => 'buy_extra_time-'.$code.'-marzban']],
+                [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code.'-marzban'], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code.'-marzban']],
                 [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
             ]]);
 
@@ -365,9 +365,9 @@ elseif (strpos($data, 'service_status-') !== false) {
             $link = $order['link'];
 
             $manage_service_btns = json_encode(['inline_keyboard' => [    
-                [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code]],
-                [['text' => 'خرید حجم اضافه', 'callback_data' => 'buy_extra_volume-'.$code], ['text' => 'افزایش اعتبار زمانی', 'callback_data' => 'buy_extra_time-'.$code]],
-                [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code]],
+                [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code.'-sanayi']],
+                [['text' => 'خرید حجم اضافه', 'callback_data' => 'buy_extra_volume-'.$code.'-sanayi'], ['text' => 'افزایش اعتبار زمانی', 'callback_data' => 'buy_extra_time-'.$code.'-sanayi']],
+                [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code.'-sanayi'], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code.'-sanayi']],
                 [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
             ]]);
 
@@ -377,6 +377,28 @@ elseif (strpos($data, 'service_status-') !== false) {
             alert('❌ سرویسی با این مشخصات یافت نشد.');
         }
 
+    }
+}
+
+elseif (strpos($data, 'getQrCode') !== false) {
+    $code = explode('-', $data)[1];
+    $type = explode('-', $data)[2];
+    $getService = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
+    $panel = $sql->query("SELECT * FROM `panels` WHERE `name` = '{$getService['location']}'")->fetch_assoc();
+
+    if ($type == 'marzban') {
+        $getUser = getUserInfo(base64_encode($code) . '_' . $from_id, $panel['token'], $panel['login_link']);
+        if (isset($getUser['links']) and $getUser != false) {
+            $subscribe = (strpos($getUser['subscription_url'], 'http') !== false) ? $getUser['subscription_url'] : $panel['login_link'] . $getUser['subscription_url'];
+            $encode_url = urldecode($subscribe);
+            bot('sendPhoto', ['chat_id' => $from_id, 'photo' => "https://api.qrserver.com/v1/create-qr-code/?data=$encode_url&size=800x800", 'caption' => "<code>$subscribe</code>", 'parse_mode' => 'html']);
+    } elseif ($type == 'sanayi') {
+        $order = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
+        $link = $order['link'];
+        $encode_url = urlencode($link);
+        bot('sendPhoto', ['chat_id' => $from_id, 'photo' => "https://api.qrserver.com/v1/create-qr-code/?data=$encode_url&size=800x800", 'caption' => "<code>$link</code>", 'parse_mode' => 'html']);
+    } else {
+        alert('❌ Error -> not found type !', true);
     }
 }
 
