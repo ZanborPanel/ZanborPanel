@@ -266,7 +266,7 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
                     $links = "";
                     foreach ($create_status['links'] as $link) $links .= $link . "\n\n";
 		    $subscribe = (strpos($create_status['subscription_url'], 'http') !== false) ? $create_status['subscription_url'] : $panel_fetch['login_link'] . $create_status['subscription_url'];
-                    $sql->query("UPDATE `users` SET `count_service` = count_service + 1, `test_account` = 'no' WHERE `from_id` = '$from_id'");
+                    $sql->query("UPDATE `users` SET `count_service` = count_service + 1, `test_account` = 'yes' WHERE `from_id` = '$from_id'");
                     $sql->query("INSERT INTO `test_account` (`from_id`, `location`, `date`, `volume`, `link`, `price`, `code`, `status`) VALUES ('$from_id', '{$panel_fetch['name']}', '{$test_account_setting['date']}', '{$test_account_setting['volume']}', '$links', '0', '$code', 'active')");
                     deleteMessage($from_id, $message_id + 1);
                     sendMessage($from_id, sprintf($texts['create_test_account'], $test_account_setting['time'], $subscribe, $panel_fetch['name'], $test_account_setting['time'], $test_account_setting['volume'], base64_encode($code)), $start_key);
@@ -381,6 +381,8 @@ elseif (strpos($data, 'service_status-') !== false) {
 }
 
 elseif (strpos($data, 'getQrCode') !== false) {
+    alert('🔎 لطفا چند ثانیه صبر کنید.');
+
     $code = explode('-', $data)[1];
     $type = explode('-', $data)[2];
     $getService = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
@@ -404,6 +406,25 @@ elseif (strpos($data, 'getQrCode') !== false) {
     } else {
         alert('❌ Error -> not found type !', true);
     }
+}
+
+elseif (strpos($data, 'write_note') !== false) {
+    $code = explode('-', $data)[1];
+    $type = explode('-', $data)[2];
+    step('set_note-'.$code.'-'.$type);
+    deleteMessage($from_id, $message_id);
+    sendMessage($from_id, "✏️ یادداشت خود را برای سرویس <code>$code</code> ارسال کنید :", $back);
+}
+
+elseif (strpos($user['step'], 'set_note') !== false) {
+    $code = explode('-', $user['step'])[1];
+    $type = explode('-', $user['step'])[2];
+    if ($sql->query("SELECT `code` FROM `notes` WHERE `code` = '$code'")->num_rows == 0) {
+        $sql->query("INSERT INTO `notes` (`note`, `code`, `type`, `status`) VALUES ('$text', '$code', '$type', 'active')");
+    } else {
+        $sql->query("UPDATE `notes` SET `note` = '$text' WHERE `code` = '$code'");
+    }
+    sendMessage($from_id, "✅ یادداشت شما با موفقیت برای سرویس <code>$code</code> تنظیم شد.", $start_key);
 }
 
 elseif ($text == '💸 شارژ حساب') {
@@ -1146,7 +1167,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     
     elseif (strpos($user['step'], 'change_name-') !== false) {
         $code = explode('-', $user['step'])[1];
-        step('none', $from_id);
+        step('none');
         $sql->query("UPDATE `panels` SET `name` = '$text' WHERE `code` = '$code'");
         sendMessage($from_id, "✅ نام پنل با موفقیت بر روی [ <b>$text</b> ] تنظیم شد.", $back_panellist);
     }
