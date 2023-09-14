@@ -451,7 +451,7 @@ elseif (strpos($data, 'buy_extra_time') !== false) {
         $key = array_chunk($key, 2);
         $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'service_status-'.$code]];
         $key = json_encode(['inline_keyboard' => $key]);
-        editMessage($from_id, "👇🏻لطفا یکی از پلن های زیر را برای افزایش اعتبار زمانی سرویس <code>$code</code> انتخاب کنید :", $message_id, $key);
+        editMessage($from_id, "👇🏻لطفا یکی از پلن های زیر را برای افزایش اعتبار زمانی به سرویس با کد پیگیری <code>$code</code> انتخاب کنید :", $message_id, $key);
     } else {
         alert('❌ پلنی برای افزایش اعتبار زمانی یافت نشد.', true);
     }
@@ -460,7 +460,7 @@ elseif (strpos($data, 'buy_extra_time') !== false) {
 elseif (strpos($data, 'buy_extra_volume') !== false) {
     $code = explode('-', $data)[1];
     $type = explode('-', $data)[2];
-    $category_limit = $sql->query("SELECT * FROM `category_limit` WHERE `status` = 'ative'");
+    $category_limit = $sql->query("SELECT * FROM `category_limit` WHERE `status` = 'active'");
 
     if ($category_limit->num_rows > 0) {
         while ($row = $category_limit->fetch_assoc()) {
@@ -469,7 +469,7 @@ elseif (strpos($data, 'buy_extra_volume') !== false) {
         $key = array_chunk($key, 2);
         $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'service_status-'.$code]];
         $key = json_encode(['inline_keyboard' => $key]);
-        editMessage($from_id, "👇🏻لطفا یکی از پلن های زیر را برای افزایش حجم اضافه سرویس <code>$code</code> انتخاب کنید :", $message_id, $key);
+        editMessage($from_id, "👇🏻لطفا یکی از پلن های زیر را برای افزایش حجم اضافه به سرویس با کد پیگیری <code>$code</code> انتخاب کنید :", $message_id, $key);
     } else {
         alert('❌ پلنی برای خرید حجم اضافه یافت نشد.', true);
     }
