@@ -312,7 +312,7 @@ elseif ($text == '🛍 سرویس های من' or $data == 'back_services') {
             $status = ($row['status'] == 'active') ? '🟢 | ' : '🔴 | ';
             $key[] = ['text' => $status . base64_encode($row['code']) . ' - ' . $row['location'], 'callback_data' => 'service_status-'.$row['code']];
         }
-        $key = array_chunk($key, 2);
+        $key = array_chunk($key, 1);
         $key = json_encode(['inline_keyboard' => $key]);
         if (isset($text)) {
             sendMessage($from_id, sprintf($texts['my_services'], $services->num_rows), $key);
@@ -2095,7 +2095,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     elseif (strpos($user['step'], 'set_edu_') !== false) {
         step('none');
         $sys = explode('_', $user['step'])[2];
-        $texts['edu_'] . $sys = str_replace('
+        $texts['edu_' . $sys] = str_replace('
         ', '\n', $text);
         file_put_contents('texts.json', json_encode($texts));
         sendMessage($from_id, "✅ متن شما با موفقیت تنظیم شد.\n\n#️⃣ سیستم عامل : <b>$sys</b>", $manage_texts);
