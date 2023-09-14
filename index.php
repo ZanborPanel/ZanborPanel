@@ -332,16 +332,29 @@ elseif (strpos($data, 'service_status-') !== false) {
     $code = explode('-', $data)[1];
     $getService = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
     $panel = $sql->query("SELECT * FROM `panels` WHERE `name` = '{$getService['location']}'")->fetch_assoc();
+
     if ($panel['type'] == 'marzban') {
-	$getUser = getUserInfo(base64_encode($code) . '_' . $from_id, $panel['token'], $panel['login_link']);
+
+        $getUser = getUserInfo(base64_encode($code) . '_' . $from_id, $panel['token'], $panel['login_link']);
         if (isset($getUser['links']) and $getUser != false) {
             $links = implode("\n\n", $getUser['links']) ?? 'NULL';
-	    $subscribe = (strpos($getUser['subscription_url'], 'http') !== false) ? $getUser['subscription_url'] : $panel['login_link'] . $getUser['subscription_url'];
-            editMessage($from_id, sprintf($texts['your_service'], ($getUser['status'] == 'active') ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['used_traffic'], 'GB'), Conversion($getUser['data_limit'], 'GB'), date('Y-d-m H:i:s',  $getUser['expire']), $subscribe), $message_id, $back_services);
+            $subscribe = (strpos($getUser['subscription_url'], 'http') !== false) ? $getUser['subscription_url'] : $panel['login_link'] . $getUser['subscription_url'];
+
+            $manage_service_btns = json_encode(['inline_keyboard' => [    
+                [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code]],
+                [['text' => 'خرید حجم اضافه', 'callback_data' => 'buy_extra_volume-'.$code], ['text' => 'افزایش اعتبار زمانی', 'callback_data' => 'buy_extra_time-'.$code]],
+                [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code]],
+                [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
+            ]]);
+
+            editMessage($from_id, sprintf($texts['your_service'], ($getUser['status'] == 'active') ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['used_traffic'], 'GB'), Conversion($getUser['data_limit'], 'GB'), date('Y-d-m H:i:s',  $getUser['expire']), $subscribe), $message_id, $manage_service_btns);
         } else {
+            $sql->query("DELETE FROM `orders` WHERE `code` = '$code'");
             alert('❌ سرویسی با این مشخصات یافت نشد.');
         }
+
     } elseif ($panel['type'] == 'sanayi') {
+
         include_once 'api/sanayi.php';
         $san_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
         $xui = new Sanayi($panel['login_link'], $panel['token']);
@@ -350,10 +363,20 @@ elseif (strpos($data, 'service_status-') !== false) {
         if ($getUser['status']) {
             $order = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
             $link = $order['link'];
-            editMessage($from_id, sprintf($texts['your_service'], ($getUser['result']['enable'] == true) ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['result']['up'] + $getUser['result']['down'], 'GB'), ($getUser['result']['total'] == 0) ? 'نامحدود' : Conversion($getUser['result']['total'], 'GB') . ' MB', date('Y-d-m H:i:s',  $getUser['result']['expiryTime']), $link), $message_id, $back_services);
+
+            $manage_service_btns = json_encode(['inline_keyboard' => [    
+                [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code]],
+                [['text' => 'خرید حجم اضافه', 'callback_data' => 'buy_extra_volume-'.$code], ['text' => 'افزایش اعتبار زمانی', 'callback_data' => 'buy_extra_time-'.$code]],
+                [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code]],
+                [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
+            ]]);
+
+            editMessage($from_id, sprintf($texts['your_service'], ($getUser['result']['enable'] == true) ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['result']['up'] + $getUser['result']['down'], 'GB'), ($getUser['result']['total'] == 0) ? 'نامحدود' : Conversion($getUser['result']['total'], 'GB') . ' MB', date('Y-d-m H:i:s',  $getUser['result']['expiryTime']), $link), $message_id, $manage_service_btns);
         } else {
+            $sql->query("DELETE FROM `orders` WHERE `code` = '$code'");
             alert('❌ سرویسی با این مشخصات یافت نشد.');
         }
+
     }
 }
 
