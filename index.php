@@ -794,7 +794,13 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     # ------------------------------------ #
     
     elseif ($text == '🎟 افزودن پلن') {
+        step('none');
+        sendMessage($from_id, "ℹ️ قصد اضافه کردن چه نوع پلنی را دارید ؟\n\n👇🏻 یکی از گزینه های زیر را انتخاب کنید :", $add_plan_button);
+    }
+
+    elseif ($data == 'add_buy_plan') { 
         step('add_name');
+        deleteMessage($from_id, $message_id);
         sendMessage($from_id, "👇🏻نام این دسته بندی را  ارسال کنید :↓", $back_panel);
     }
     
@@ -823,6 +829,60 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         $sql->query("INSERT INTO `category` (`limit`, `date`, `name`, `price`, `code`, `status`) VALUES ('{$info[1]}', '{$info[2]}', '{$info[0]}', '$text', '$code', 'active')");
         sendmessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت و به لیست اضافه شد.\n\n◽حجم ارسالی : <code>{$info[1]}</code>\n◽قیمت ارسالی : <code>$text</code>", $manage_server);
         if (file_exists('add_plan.txt')) unlink('add_plan.txt');
+    }
+
+    elseif ($data == 'add_limit_plan') { 
+        step('add_name_limit');
+        deleteMessage($from_id, $message_id);
+        sendMessage($from_id, "👇🏻نام این دسته بندی را  ارسال کنید :↓", $back_panel);
+    }
+    
+    elseif ($user['step'] == 'add_name_limit' and $text != '⬅️ بازگشت به مدیریت') {
+        step('add_limit_limit');
+        file_put_contents('add_plan_limit.txt', "$text\n", FILE_APPEND);
+        sendMessage($from_id, "👇🏻حجم خود را به صورت عدد صحیح و لاتین ارسال کنید :↓\n\n◽نمونه : <code>50</code>", $back_panel);
+    }
+    
+    elseif ($user['step'] == 'add_limit_limit' and $text != '⬅️ بازگشت به مدیریت') {
+        step('add_price_limit');
+        file_put_contents('add_plan_limit.txt', "$text\n", FILE_APPEND);
+        sendMessage($from_id, "💸 مبلغ این حجم را به صورت عدد صحیح و لاتین ارسال کنید :↓\n\n◽نمونه : <code>60000</code>", $back_panel);
+    }
+    
+    elseif ($user['step'] == 'add_price_limit' and $text != '⬅️ بازگشت به مدیریت') {
+        step('none');
+        $info = explode("\n", file_get_contents('add_plan_limit.txt'));
+        $code = rand(1111111, 9999999);
+        $sql->query("INSERT INTO `category_limit` (`limit`, `name`, `price`, `code`, `status`) VALUES ('{$info[1]}', '{$info[0]}', '$text', '$code', 'active')");
+        sendmessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت و به لیست اضافه شد.\n\n◽حجم ارسالی : <code>{$info[1]}</code>\n◽قیمت ارسالی : <code>$text</code>", $manage_server);
+        if (file_exists('add_plan_limit.txt')) unlink('add_plan_limit.txt');
+    }
+
+    elseif ($data == 'add_date_plan') { 
+        step('add_name_date');
+        deleteMessage($from_id, $message_id);
+        sendMessage($from_id, "👇🏻نام این دسته بندی را  ارسال کنید :↓", $back_panel);
+    }
+    
+    elseif ($user['step'] == 'add_name_date' and $text != '⬅️ بازگشت به مدیریت') {
+        step('add_date_date');
+        file_put_contents('add_plan_date.txt', "$text\n", FILE_APPEND);
+        sendMessage($from_id, "👇🏻تاریخ خود را به صورت عدد صحیح و لاتین ارسال کنید :↓\n\n◽نمونه : <code>30</code>", $back_panel);
+    }
+    
+    elseif ($user['step'] == 'add_date_date' and $text != '⬅️ بازگشت به مدیریت') {
+        step('add_price_date');
+        file_put_contents('add_plan_date.txt', "$text\n", FILE_APPEND);
+        sendMessage($from_id, "💸 مبلغ این حجم را به صورت عدد صحیح و لاتین ارسال کنید :↓\n\n◽نمونه : <code>60000</code>", $back_panel);
+    }
+    
+    elseif ($user['step'] == 'add_price_date' and $text != '⬅️ بازگشت به مدیریت') {
+        step('none');
+        $info = explode("\n", file_get_contents('add_plan_date.txt'));
+        $code = rand(1111111, 9999999);
+        $sql->query("INSERT INTO `category_date` (`limit`, `name`, `price`, `code`, `status`) VALUES ('{$info[1]}', '{$info[0]}', '$text', '$code', 'active')");
+        sendmessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت و به لیست اضافه شد.\n\n◽حجم ارسالی : <code>{$info[1]}</code>\n◽قیمت ارسالی : <code>$text</code>", $manage_server);
+        if (file_exists('add_plan_date.txt')) unlink('add_plan_date.txt');
     }
     
     elseif ($text == '⚙️ لیست سرور ها' or $data == 'back_panellist') {
