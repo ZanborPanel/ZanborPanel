@@ -510,6 +510,7 @@ elseif (strpos($data, 'confirm_extra_time') !== false) {
         $response = Modifyuser(base64_encode($service_code) . '_' . $from_id, $fields, $token, $panel['login_link']);
         sendMessage($from_id, json_encode($response, 448));
         sendMessage($from_id, base64_encode($service_code) . '_' . $from_id);
+        sendMessage($from_id, $token);
     } elseif ($service['type'] == 'sanayi') {
         $response = 10;
     }
