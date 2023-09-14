@@ -484,8 +484,8 @@ elseif ($data == 'cancel_buy_extra_time') {
 elseif (strpos($data, 'select_extra_time') !== false) {
     $service_code = explode('-', $data)[2];
     $plan_code = explode('-', $data)[1];
-    $service = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'");
-    $plan = $sql->query("SELECT * FROM `category_date` WHERE `code` = '$plan_code'");
+    $service = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'")->fetch_assoc();
+    $plan = $sql->query("SELECT * FROM `category_date` WHERE `code` = '$plan_code'")->fetch_assoc();
     
     $access_key = json_encode(['inline_keyboard' => [
         [['text' => '❌ لغو', 'callback_data' => 'cancel_buy_extra_time'], ['text' => '', 'callback_data' => 'confirm_extra_time-'.$service_code]],
