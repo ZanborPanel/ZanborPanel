@@ -503,20 +503,29 @@ elseif (strpos($data, 'confirm_extra_time') !== false) {
     $getService = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'")->fetch_assoc();
     $panel = $sql->query("SELECT * FROM `panels` WHERE `name` = '{$getService['location']}'")->fetch_assoc();
 
-    if ($service['type'] == 'marzban') {
-        $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
-        $getUser = getUserInfo(base64_encode($service_code) . '_' . $from_id, $token, $panel['login_link']);
-        $response = Modifyuser(base64_encode($service_code) . '_' . $from_id, array('expire' => $getUser['expire'] += 86400 * $plan['date']), $token, $panel['login_link']);
-    } elseif ($service['type'] == 'sanayi') {
-        include_once 'api/sanayi.php';
-        $san_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
-        $xui = new Sanayi($panel['login_link'], $panel['token']);
-        $getUser = $xui->getUserInfo(base64_encode($code) . '_' . $from_id, $san_setting['inbound_id']);
-        $getUser = json_decode($getUser, true);
-    }
+    if ($user['coin'] >= $plan['price']) {
+        if ($service['type'] == 'marzban') {
+            $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
+            $getUser = getUserInfo(base64_encode($service_code) . '_' . $from_id, $token, $panel['login_link']);
+            $response = Modifyuser(base64_encode($service_code) . '_' . $from_id, array('expire' => $getUser['expire'] += 86400 * $plan['date']), $token, $panel['login_link']);
+        } elseif ($service['type'] == 'sanayi') {
+            include_once 'api/sanayi.php';
+            $panel_setting = $sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '{$panel['code']}'")->fetch_assoc();
+            $xui = new Sanayi($panel['login_link'], $panel['token']);
+            $getUser = $xui->getUserInfo(base64_encode($code) . '_' . $from_id, $panel_setting['inbound_id']);
+            $getUser = json_decode($getUser, true);
+            if ($getUser['status'] == true) {
+                $response = $xui->addExpire(base64_encode($service_code) . '_' . $from_id, $plan['date'], $panel_setting['inbound_id']);
+            } else {
+                alert('❌ Error --> not found service');
+            }
+        }
 
-    deleteMessage($from_id, $message_id);
-    sendMessage($from_id, sprintf($texts['success_extra_time'], $plan['date'], $plan['name'], number_format($plan['price'])), $start_key);
+        deleteMessage($from_id, $message_id);
+        sendMessage($from_id, sprintf($texts['success_extra_time'], $plan['date'], $plan['name'], number_format($plan['price'])), $start_key);
+    } else {
+        alert('❌ موجودی شما کافی نیست.', true);
+    }
 }
 
 elseif (strpos($data, 'select_extra_volume') !== false) {
@@ -1183,7 +1192,11 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
             $id_status = json_decode($xui->checkId($text), true)['status'];
             if ($id_status == true) {
                 step('none');
-                $sql->query("UPDATE `sanayi_settings` SET `inbound_id` = '$text'");
+                if ($sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '$code'")->num_rows > 0) {
+                    $sql->query("UPDATE `sanayi_panel_setting` SET `inbound_id` = '$text' WHERE `code` = '$code'");
+                } else {
+                    $sql->query("INSERT INTO `sanayi_panel_setting` (`code`, `inbound_id`, `example_link`, `flow`) VALUES ('$code', '$text', 'none', 'offflow')");
+                }
                 sendMessage($from_id, "✅ با موفقیت تنظیم شد !", $manage_server);
             } else {
                 sendMessage($from_id, "❌ اینباندی با ایدی <code>$text</code> پیدا نشد !", $back_panel);
@@ -1200,10 +1213,14 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     }
     
     elseif (strpos($user['step'], 'set_example_link_sanayi') !== false) {
-        if (strpos($text, '%s1') !== false and strpos($text, '%s2') !== false) {
+        if (strpos($text, '%s1') !== false and strpos($text, '%s3') !== false) {
             step('none');
             $code = explode('-', $data)[1];
-            $sql->query("UPDATE `sanayi_settings` SET `example_link` = '$text'");
+            if ($sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '$code'")->num_rows > 0) {
+                $sql->query("UPDATE `sanayi_panel_setting` SET `example_link` = '$text' WHERE `code` = '$code'");
+            } else {
+                $sql->query("INSERT INTO `sanayi_panel_setting` (`code`, `inbound_id`, `example_link`, `flow`) VALUES ('$code', 'none', '$text', 'offflow')");
+            }
             sendMessage($from_id, "✅ با موفقیت تنظیم شد !", $manage_server);
         } else {
             sendMessage($from_id, "❌ نمونه لینک ارسالی شما اشتباه است !", $back_panel);

@@ -239,6 +239,10 @@ class Sanayi{
         }
         return json_encode(['status' => false, 'msg' => 'not found', 'status_code' => 404], 448);
     }
+
+    public function addExpire($remark, $date, $id) {
+        return 'ok';
+    }
     
 }
 
