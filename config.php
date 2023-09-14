@@ -622,10 +622,16 @@ $manage_off_on_paymanet = json_encode(['inline_keyboard' => [
 ]]);
 
 $manage_texts = json_encode(['keyboard' => [
-    [['text' => 'متن استارت']],
-    [['text' => 'متن تعرفه خدمات']],
+    [['text' => '✏️ متن تعرفه خدمات'], ['text' => '✏️ متن استارت']],
+    [['text' => '✏️ متن راهنمای اتصال']],
     [['text' => '⬅️ بازگشت به مدیریت']]
 ], 'resize_keyboard' => true]);
+
+$set_text_edu = json_encode(['inline_keyboard' => [
+    [['text' => '🍏 ios', 'callback_data' => 'set_edu_ios'], ['text' => '📱 android', 'callback_data' => 'set_edu_android']],
+    [['text' => '🖥️ mac', 'callback_data' => 'set_edu_mac'], ['text' => '💻 windows', 'callback_data' => 'set_edu_windows']],
+    [['text' => '🐧 linux', 'callback_data' => 'set_edu_linux']]
+]]);
 
 $cancel = json_encode(['keyboard' => [
     [['text' => '❌ انصراف']]
