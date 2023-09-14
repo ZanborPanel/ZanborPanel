@@ -1260,9 +1260,9 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         }
         $button[] = [['text' => 'حذف', 'callback_data' => 'null'], ['text' => 'وضعیت', 'callback_data' => 'null'], ['text' => 'نام', 'callback_data' => 'null'], ['text' => 'اطلاعات', 'callback_data' => 'null']];
         $result = $sql->query("SELECT * FROM `category_limit`");
-       while ($row = $result->fetch_array()) {
+        while ($row = $result->fetch_array()) {
             $status = $row['status'] == 'active' ? '✅' : '❌';
-            $button[] = [['text' => '🗑', 'callback_data' => 'delete_limit-'.$row['code']], ['text' => $status, 'callback_data' => 'change_status_cat-'.$row['code']], ['text' => $row['name'], 'callback_data' => 'manage_list-'.$row['code']], ['text' => '👁', 'callback_data' => 'manage_cat-'.$row['code']]];
+            $button[] = [['text' => '🗑', 'callback_data' => 'delete_limit_limit-'.$row['code']], ['text' => $status, 'callback_data' => 'change_status_cat_limit-'.$row['code']], ['text' => $row['name'], 'callback_data' => 'manage_list_limit-'.$row['code']], ['text' => '👁', 'callback_data' => 'manage_cat_limit-'.$row['code']]];
         }
         $button = json_encode(['inline_keyboard' => $button]);
         $count = $result->num_rows;
@@ -1287,7 +1287,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         $result = $sql->query("SELECT * FROM `category_date`");
        while ($row = $result->fetch_array()) {
             $status = $row['status'] == 'active' ? '✅' : '❌';
-            $button[] = [['text' => '🗑', 'callback_data' => 'delete_limit-'.$row['code']], ['text' => $status, 'callback_data' => 'change_status_cat-'.$row['code']], ['text' => $row['name'], 'callback_data' => 'manage_list-'.$row['code']], ['text' => '👁', 'callback_data' => 'manage_cat-'.$row['code']]];
+            $button[] = [['text' => '🗑', 'callback_data' => 'delete_limit_date-'.$row['code']], ['text' => $status, 'callback_data' => 'change_status_cat_date-'.$row['code']], ['text' => $row['name'], 'callback_data' => 'manage_list_date-'.$row['code']], ['text' => '👁', 'callback_data' => 'manage_cat_date-'.$row['code']]];
         }
         $button = json_encode(['inline_keyboard' => $button]);
         $count = $result->num_rows;
