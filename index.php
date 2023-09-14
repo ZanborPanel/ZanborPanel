@@ -475,7 +475,7 @@ elseif (strpos($data, 'buy_extra_volume') !== false) {
     }
 }
 
-elseif ($data == 'cancel_buy_extra_time') {
+elseif ($data == 'cancel_buy') {
     step('none');
     deleteMessage($from_id, $message_id);
     sendMessage($from_id, "❌ فاکتور شما با موفقیت لغو شد.", $start_key);
@@ -488,7 +488,7 @@ elseif (strpos($data, 'select_extra_time') !== false) {
     $plan = $sql->query("SELECT * FROM `category_date` WHERE `code` = '$plan_code'")->fetch_assoc();
     
     $access_key = json_encode(['inline_keyboard' => [
-        [['text' => '❌ لغو', 'callback_data' => 'cancel_buy_extra_time'], ['text' => '✅ تایید', 'callback_data' => 'confirm_extra_time-'.$service_code]],
+        [['text' => '❌ لغو', 'callback_data' => 'cancel_buy'], ['text' => '✅ تایید', 'callback_data' => 'confirm_extra_time-'.$service_code]],
     ]]);
     
     editMessage($from_id, "🟢 فاکتور افزایش اعتبار زمانی شما برای سرویس با کد پیگیری <code>$service_code</code> ساخته شد.\n\n▫️سرویس انتخابی : <code>$service_code</code>\n▫️پلن انتخابی : <b>{$plan['name']}</b>\n▫️قیمت فاکتور : <code>{$plan['price']}</code>\n\nℹ️ در صورت تایید و افزایش اعتبار زمانی سرویس <code>$code</code> بر روی دکمه [ <b>✅ تایید</b> ] کلیک کنید و در غیر این صورت بر روی دکمه [ <b>❌ لغو</b> ] کلیک کنید.", $message_id, $access_key);
