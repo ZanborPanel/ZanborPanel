@@ -2088,7 +2088,17 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 
     elseif (strpos($data, 'set_edu_') !== false) {
         $sys = explode('_', $data)[2];
-        sendMessage($from_id, $sys);
+        step('set_edu_'.$sys);
+        sendMessage($from_id, "👇🏻متن مورد نظر خود را به صورت صحیح ارسال کنید :\n\n⬅️ سیستم عامل انتخابی : <b>$sys</b>", $back_panel);
+    }
+
+    elseif (strpos($user['step'], 'set_edu_') !== false) {
+        step('none');
+        $sys = explode('_', $user['step'])[2];
+        $texts['edu_'] . $sys = str_replace('
+        ', '\n', $text);
+        file_put_contents('texts.json', json_encode($texts));
+        sendMessage($from_id, "✅ متن شما با موفقیت تنظیم شد.\n\n#️⃣ سیستم عامل : <b>$sys</b>", $manage_texts);
     }
     
     // -----------------manage admins ----------------- //
