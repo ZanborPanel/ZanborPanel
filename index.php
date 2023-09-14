@@ -488,10 +488,32 @@ elseif (strpos($data, 'select_extra_time') !== false) {
     $plan = $sql->query("SELECT * FROM `category_date` WHERE `code` = '$plan_code'")->fetch_assoc();
     
     $access_key = json_encode(['inline_keyboard' => [
-        [['text' => '❌ لغو', 'callback_data' => 'cancel_buy'], ['text' => '✅ تایید', 'callback_data' => 'confirm_extra_time-'.$service_code]],
+        [['text' => '❌ لغو', 'callback_data' => 'cancel_buy'], ['text' => '✅ تایید', 'callback_data' => 'confirm_extra_time-'.$service_code.'-'.$plan_code]],
     ]]);
     
     editMessage($from_id, "🟢 فاکتور افزایش اعتبار زمانی شما برای سرویس با کد پیگیری <code>$service_code</code> ساخته شد.\n\n▫️سرویس انتخابی : <code>$service_code</code>\n▫️پلن انتخابی : <b>{$plan['name']}</b>\n▫️قیمت فاکتور : <code>{$plan['price']}</code>\n\nℹ️ در صورت تایید و افزایش اعتبار زمانی سرویس <code>$code</code> بر روی دکمه [ <b>✅ تایید</b> ] کلیک کنید و در غیر این صورت بر روی دکمه [ <b>❌ لغو</b> ] کلیک کنید.", $message_id, $access_key);
+}
+
+elseif (strpos($data, 'confirm_extra_time') !== false) {
+    alert('🆙 لطفا چند ثانیه صبر کنید.');
+    $service_code = explode('-', $data)[1];
+    $plan_code = explode('-', $data)[2];
+    $service = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'")->fetch_assoc();
+    $plan = $sql->query("SELECT * FROM `category_date` WHERE `code` = '$plan_code'")->fetch_assoc();
+    $getService = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'")->fetch_assoc();
+    $panel = $sql->query("SELECT * FROM `panels` WHERE `name` = '{$getService['location']}'")->fetch_assoc();
+
+    if ($service['type'] == 'marzban') {
+        $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
+        $getUser = getUserInfo(base64_encode($service_code) . '_' . $from_id, $token, $panel['login_link']);
+        $fields = array('expire' => $getUser['expire'] + strtotime("+ {$plan['date']} day"));
+        $response = Modifyuser(base64_encode($service_code) . '_' . $from_id, $fields, $token, $panel['login_link']);
+    } elseif ($service['type'] == 'sanayi') {
+        $response = 10;
+    }
+
+    deleteMessage($from_id, $message_id);
+    sendMessage($from_id, "✅ به سرویس شما با موفقیت <code>{$plan['date']}</code> روز اعتبار اضافه شد.\n\n▫️پلن انتخابی : <b>{$plan['name']}</b>\n▫️مبلغ پرداخت شده : <code>{$plan['price']}</code> ", $start_key);
 }
 
 elseif (strpos($data, 'select_extra_volume') !== false) {
