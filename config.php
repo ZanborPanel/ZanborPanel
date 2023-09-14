@@ -518,6 +518,7 @@ $select_diposet_payment = json_encode(['inline_keyboard' => [
 
 $panel = json_encode(['keyboard' => [
     [['text' => '📞 اطلاعیه آپدیت ربات']],
+    [['text' => '🔑 سیستم احراز هویت']],
     [['text' => '👥 مدیریت آمار ربات'], ['text' => '🌐 مدیریت سرور']],
     [['text' => '📤 مدیریت پیام'], ['text' => '👤 مدیریت کاربران']],
     [['text' => '⚙️ تنظیمات'], ['text' => '👮‍♂️مدیریت ادمین']],

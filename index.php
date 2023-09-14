@@ -506,7 +506,7 @@ elseif (strpos($data, 'confirm_extra_time') !== false) {
     if ($service['type'] == 'marzban') {
         $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
         $getUser = getUserInfo(base64_encode($service_code) . '_' . $from_id, $token, $panel['login_link']);
-        $fields = array('expire' => strtotime("+ {$plan['date']} day"));
+        $fields = array('expire' => strtotime("+ {$plan['date']} day"), 'data_limit_reset_strategy' => 'no_reset');
         $response = Modifyuser(base64_encode($service_code) . '_' . $from_id, $fields, $token, $panel['login_link']);
         sendMessage($from_id, json_encode($response, 448));
     } elseif ($service['type'] == 'sanayi') {
