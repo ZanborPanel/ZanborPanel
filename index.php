@@ -393,6 +393,9 @@ elseif (strpos($data, 'getQrCode') !== false) {
             $subscribe = (strpos($getUser['subscription_url'], 'http') !== false) ? $getUser['subscription_url'] : $panel['login_link'] . $getUser['subscription_url'];
             $encode_url = urldecode($subscribe);
             bot('sendPhoto', ['chat_id' => $from_id, 'photo' => "https://api.qrserver.com/v1/create-qr-code/?data=$encode_url&size=800x800", 'caption' => "<code>$subscribe</code>", 'parse_mode' => 'html']);
+        } else {
+            alert('❌ Error', true);
+        }
     } elseif ($type == 'sanayi') {
         $order = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
         $link = $order['link'];
