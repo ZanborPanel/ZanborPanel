@@ -356,7 +356,7 @@ elseif (strpos($data, 'service_status-') !== false) {
             }
         } else {
             $sql->query("DELETE FROM `orders` WHERE `code` = '$code'");
-            alert('❌ سرویسی با این مشخصات یافت نشد.');
+            alert($texts['not_found_service']);
         }
 
     } elseif ($panel['type'] == 'sanayi') {
@@ -386,14 +386,14 @@ elseif (strpos($data, 'service_status-') !== false) {
             }
         } else {
             $sql->query("DELETE FROM `orders` WHERE `code` = '$code'");
-            alert('❌ سرویسی با این مشخصات یافت نشد.');
+            alert($texts['not_found_service']);
         }
 
     }
 }
 
 elseif (strpos($data, 'getQrCode') !== false) {
-    alert('🔎 لطفا چند ثانیه صبر کنید.');
+    alert($texts['wait']);
 
     $code = explode('-', $data)[1];
     $type = explode('-', $data)[2];
@@ -425,7 +425,7 @@ elseif (strpos($data, 'write_note') !== false) {
     $type = explode('-', $data)[2];
     step('set_note-'.$code.'-'.$type);
     deleteMessage($from_id, $message_id);
-    sendMessage($from_id, "✏️ یادداشت خود را برای سرویس <code>$code</code> ارسال کنید :", $back);
+    sendMessage($from_id, sprintf($texts['send_note'], $code), $back);
 }
 
 elseif (strpos($user['step'], 'set_note') !== false) {
@@ -436,7 +436,7 @@ elseif (strpos($user['step'], 'set_note') !== false) {
     } else {
         $sql->query("UPDATE `notes` SET `note` = '$text' WHERE `code` = '$code'");
     }
-    sendMessage($from_id, "✅ یادداشت شما با موفقیت برای سرویس <code>$code</code> تنظیم شد.", $start_key);
+    sendMessage($from_id, sprintf($texts['set_note_success'], $code), $start_key);
 }
 
 elseif (strpos($data, 'buy_extra_time') !== false) {
@@ -451,9 +451,9 @@ elseif (strpos($data, 'buy_extra_time') !== false) {
         $key = array_chunk($key, 2);
         $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'service_status-'.$code]];
         $key = json_encode(['inline_keyboard' => $key]);
-        editMessage($from_id, "👇🏻لطفا یکی از پلن های زیر را برای افزایش اعتبار زمانی به سرویس با کد پیگیری <code>$code</code> انتخاب کنید :", $message_id, $key);
+        editMessage($from_id, sprintf($texts['select_extra_time_plan'], $code), $message_id, $key);
     } else {
-        alert('❌ پلنی برای افزایش اعتبار زمانی یافت نشد.', true);
+        alert($texts['not_found_plan_extra_time'], true);
     }
 }
 
@@ -469,16 +469,16 @@ elseif (strpos($data, 'buy_extra_volume') !== false) {
         $key = array_chunk($key, 2);
         $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'service_status-'.$code]];
         $key = json_encode(['inline_keyboard' => $key]);
-        editMessage($from_id, "👇🏻لطفا یکی از پلن های زیر را برای افزایش حجم اضافه به سرویس با کد پیگیری <code>$code</code> انتخاب کنید :", $message_id, $key);
+        editMessage($from_id, sprintf($texts['select_extra_volume_plan'], $code), $message_id, $key);
     } else {
-        alert('❌ پلنی برای خرید حجم اضافه یافت نشد.', true);
+        alert($texts['not_found_plan_extra_volume'], true);
     }
 }
 
 elseif ($data == 'cancel_buy') {
     step('none');
     deleteMessage($from_id, $message_id);
-    sendMessage($from_id, "❌ فاکتور شما با موفقیت لغو شد.", $start_key);
+    sendMessage($from_id, $texts['cancel_extra_factor'], $start_key);
 }
 
 elseif (strpos($data, 'select_extra_time') !== false) {
@@ -491,11 +491,11 @@ elseif (strpos($data, 'select_extra_time') !== false) {
         [['text' => '❌ لغو', 'callback_data' => 'cancel_buy'], ['text' => '✅ تایید', 'callback_data' => 'confirm_extra_time-'.$service_code.'-'.$plan_code]],
     ]]);
     
-    editMessage($from_id, "🟢 فاکتور افزایش اعتبار زمانی شما برای سرویس با کد پیگیری <code>$service_code</code> ساخته شد.\n\n▫️سرویس انتخابی : <code>$service_code</code>\n▫️پلن انتخابی : <b>{$plan['name']}</b>\n▫️قیمت فاکتور : <code>{$plan['price']}</code>\n\nℹ️ در صورت تایید و افزایش اعتبار زمانی سرویس <code>$code</code> بر روی دکمه [ <b>✅ تایید</b> ] کلیک کنید و در غیر این صورت بر روی دکمه [ <b>❌ لغو</b> ] کلیک کنید.", $message_id, $access_key);
+    editMessage($from_id, sprintf($texts['create_buy_extra_time_factor'], $service_code, $service_code, $plan['name'], number_format($plan['price']), $service_code), $message_id, $access_key);
 }
 
 elseif (strpos($data, 'confirm_extra_time') !== false) {
-    alert('🆙 لطفا چند ثانیه صبر کنید.');
+    alert($texts['wait']);
     $service_code = explode('-', $data)[1];
     $plan_code = explode('-', $data)[2];
     $service = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'")->fetch_assoc();
@@ -508,16 +508,28 @@ elseif (strpos($data, 'confirm_extra_time') !== false) {
         $getUser = getUserInfo(base64_encode($service_code) . '_' . $from_id, $token, $panel['login_link']);
         $response = Modifyuser(base64_encode($service_code) . '_' . $from_id, array('expire' => $getUser['expire'] += 86400 * $plan['date']), $token, $panel['login_link']);
     } elseif ($service['type'] == 'sanayi') {
-        $response = 10;
+        include_once 'api/sanayi.php';
+        $san_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
+        $xui = new Sanayi($panel['login_link'], $panel['token']);
+        $getUser = $xui->getUserInfo(base64_encode($code) . '_' . $from_id, $san_setting['inbound_id']);
+        $getUser = json_decode($getUser, true);
     }
 
     deleteMessage($from_id, $message_id);
-    sendMessage($from_id, "✅ به سرویس شما با موفقیت <code>{$plan['date']}</code> روز اعتبار اضافه شد.\n\n▫️پلن انتخابی : <b>{$plan['name']}</b>\n▫️مبلغ پرداخت شده : <code>{$plan['price']}</code> ", $start_key);
+    sendMessage($from_id, sprintf($texts['success_extra_time'], $plan['date'], $plan['name'], number_format($plan['price'])), $start_key);
 }
 
 elseif (strpos($data, 'select_extra_volume') !== false) {
     $service_code = explode('-', $data)[2];
     $plan_code = explode('-', $data)[1];
+    $service = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'")->fetch_assoc();
+    $plan = $sql->query("SELECT * FROM `category_limit` WHERE `code` = '$plan_code'")->fetch_assoc();
+    
+    $access_key = json_encode(['inline_keyboard' => [
+        [['text' => '❌ لغو', 'callback_data' => 'cancel_buy'], ['text' => '✅ تایید', 'callback_data' => 'confirm_extra_volume-'.$service_code.'-'.$plan_code]],
+    ]]);
+    
+    editMessage($from_id, sprintf($texts['create_buy_extra_volume_factor'], $service_code, $service_code, $plan['name'], number_format($plan['price']), $service_code), $message_id, $access_key);
 }
 
 elseif ($text == '💸 شارژ حساب') {
