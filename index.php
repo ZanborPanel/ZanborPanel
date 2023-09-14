@@ -439,6 +439,33 @@ elseif (strpos($user['step'], 'set_note') !== false) {
     sendMessage($from_id, "✅ یادداشت شما با موفقیت برای سرویس <code>$code</code> تنظیم شد.", $start_key);
 }
 
+elseif (strpos($data, 'buy_extra_time') !== false) {
+    $code = explode('-', $data)[1];
+    $type = explode('-', $data)[2];
+    $category_date = $sql->query("SELECT * FROM `category_date`");
+    if ($category_date->num_rows > 0) {
+        while ($row = $category_date->fetch_assoc()) {
+            $key[] = ['text' => $row['name'], 'callback_data' => 'select-'.$row['code']];
+        }
+        $key = array_chunk($key, 2);
+        $key = json_encode(['inline_keyboard' => $key]);
+        editMessage($from_id, "select :", $key);
+    } else {
+        alert('❌ پلنی برای افزایش اعتبار زمانی یافت نشد.', true);
+    }
+}
+
+elseif (strpos($data, 'buy_extra_volume') !== false) {
+    $code = explode('-', $data)[1];
+    $type = explode('-', $data)[2];
+    $category_limit = $sql->query("SELECT * FROM `category_limit`");
+    if ($category_limit->num_rows > 0) {
+
+    } else {
+        alert('❌ پلنی برای خرید حجم اضافه یافت نشد.', true);
+    }
+}
+
 elseif ($text == '💸 شارژ حساب') {
     step('diposet');
     sendMessage($from_id, $texts['diposet'], $back);
