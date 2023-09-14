@@ -1213,7 +1213,25 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         }
         editMessage($from_id, $txt, $message_id, $back_panellist);
     }
-    
+
+    elseif (strpos($data, 'set_inbound_marzban') !== false) {
+        $code = explode('-', $data)[1];
+        step('send_inbound_marzban-'.$code);
+        sendMessage($from_id, "🆕 نام اینباند مورد نظر خود را ارسال کنید :\n\n❌ توجه داشته باشید که اگر نام اینباند را اشتباه وارد کنید امکان خطا در ساخت سرویس خواهد بود و همچنین اینباند ارسالی شما باید مربوط به پروتکل که برای این پنل در ربات فعال کردید باشد.", $back_panel);
+    }
+
+    elseif (strpos($user['step'], 'send_inbound_marzban') !== false and $text != '✔ اتمام و ثبت') {
+        $code = explode('-', $user['step'])[1];
+        $rand_code = rand(111111, 999999);
+        $sql->query("INSERT INTO `marzban_inbounds` (`panel`, `inbound`, `code`, `status`) VALUES ('$code', '$text', '$rand_code', 'active')");
+        sendMessage($from_id, "✅ اینباند ارسالی شما با موفقیت تنظیم شد.\n\n#️⃣ در صورت ارسال اینباند جدید آن را ارسال کنید و در غیر این صورت دستور /end_inbound را ارسال کنید یا روی دکمه زیر کلیک کنید.", $end_inbound);
+    }
+
+    elseif ($text == '✔ اتمام و ثبت' and strpos($user['step'], 'send_inbound_marzban') !== false) {
+        step('none');
+        sendMessage($from_id, "✅ همه اینباند های ارسالی شما ثبت شد.", $manage_server);
+    }
+
     elseif (strpos($data, 'set_inbound_sanayi') !== false) {
         $code = explode('-', $data)[1];
         step('send_inbound_id-'.$code);

@@ -241,7 +241,8 @@ class Sanayi{
     }
 
     public function addExpire($remark, $date, $id) {
-        return 'ok';
+        $getUser = json_decode(self::getUserInfo($remark, $id), true);
+        return json_encode($getUser, 448);
     }
 
     public function addVolume($remark, $limit, $id) {

@@ -43,6 +43,13 @@ mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `sanayi_panel_setting` (
     `flow` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
 
+mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `marzban_inbounds` (
+    `panel` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
+    `inbound` TEXT COLLATE utf8mb4_bin DEFAULT NULL,
+    `code` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
+    `status` varchar(20) COLLATE utf8mb4_bin DEFAULT 'active'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
+
 mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `orders` (
     `row` int(200) AUTO_INCREMENT PRIMARY KEY,
     `from_id` varchar(20) COLLATE utf8mb4_bin NOT NULL,
