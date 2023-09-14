@@ -367,6 +367,7 @@ elseif (strpos($data, 'service_status-') !== false) {
         $getUser = $xui->getUserInfo(base64_encode($code) . '_' . $from_id, $san_setting['inbound_id']);
         $getUser = json_decode($getUser, true);
         if ($getUser['status']) {
+            $note = $sql->query("SELECT * FROM `notes` WHERE `code` = '$code'");
             $order = $sql->query("SELECT * FROM `orders` WHERE `code` = '$code'")->fetch_assoc();
             $link = $order['link'];
 
@@ -377,7 +378,12 @@ elseif (strpos($data, 'service_status-') !== false) {
                 [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
             ]]);
 
-            editMessage($from_id, sprintf($texts['your_service'], ($getUser['result']['enable'] == true) ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['result']['up'] + $getUser['result']['down'], 'GB'), ($getUser['result']['total'] == 0) ? 'نامحدود' : Conversion($getUser['result']['total'], 'GB') . ' MB', date('Y-d-m H:i:s',  $getUser['result']['expiryTime']), $link), $message_id, $manage_service_btns);
+            if ($note->num_rows == 0) {
+                editMessage($from_id, sprintf($texts['your_service'], ($getUser['result']['enable'] == true) ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['result']['up'] + $getUser['result']['down'], 'GB'), ($getUser['result']['total'] == 0) ? 'نامحدود' : Conversion($getUser['result']['total'], 'GB') . ' MB', date('Y-d-m H:i:s',  $getUser['result']['expiryTime']), $link), $message_id, $manage_service_btns);
+            } else {
+                $note = $note->fetch_assoc();
+                editMessage($from_id, sprintf($texts['your_service_with_note'], ($getUser['result']['enable'] == true) ? '🟢 فعال' : '🔴 غیرفعال', $note['note'], $getService['location'], base64_encode($code), Conversion($getUser['result']['up'] + $getUser['result']['down'], 'GB'), ($getUser['result']['total'] == 0) ? 'نامحدود' : Conversion($getUser['result']['total'], 'GB') . ' MB', date('Y-d-m H:i:s',  $getUser['result']['expiryTime']), $link), $message_id, $manage_service_btns);
+            }
         } else {
             $sql->query("DELETE FROM `orders` WHERE `code` = '$code'");
             alert('❌ سرویسی با این مشخصات یافت نشد.');
