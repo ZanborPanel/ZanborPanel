@@ -387,7 +387,8 @@ elseif (strpos($data, 'getQrCode') !== false) {
     $panel = $sql->query("SELECT * FROM `panels` WHERE `name` = '{$getService['location']}'")->fetch_assoc();
 
     if ($type == 'marzban') {
-        $getUser = getUserInfo(base64_encode($code) . '_' . $from_id, $panel['token'], $panel['login_link']);
+        $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
+        $getUser = getUserInfo(base64_encode($code) . '_' . $from_id, $token, $panel['login_link']);
         if (isset($getUser['links']) and $getUser != false) {
             $subscribe = (strpos($getUser['subscription_url'], 'http') !== false) ? $getUser['subscription_url'] : $panel['login_link'] . $getUser['subscription_url'];
             $encode_url = urldecode($subscribe);
