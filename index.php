@@ -451,7 +451,7 @@ elseif (strpos($data, 'buy_extra_time') !== false) {
         $key = array_chunk($key, 2);
         $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'service_status-'.$code]];
         $key = json_encode(['inline_keyboard' => $key]);
-        editMessage($from_id, "select below plans for buy extra time: ", $message_id, $key);
+        editMessage($from_id, "👇🏻لطفا یکی از پلن های زیر را برای افزایش اعتبار زمانی سرویس <code>$code</code> انتخاب کنید :", $message_id, $key);
     } else {
         alert('❌ پلنی برای افزایش اعتبار زمانی یافت نشد.', true);
     }
@@ -463,7 +463,13 @@ elseif (strpos($data, 'buy_extra_volume') !== false) {
     $category_limit = $sql->query("SELECT * FROM `category_limit` WHERE `status` = 'ative'");
 
     if ($category_limit->num_rows > 0) {
-
+        while ($row = $category_limit->fetch_assoc()) {
+            $key[] = ['text' => $row['name'], 'callback_data' => 'select_extra_volume-'.$row['code']];
+        }
+        $key = array_chunk($key, 2);
+        $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'service_status-'.$code]];
+        $key = json_encode(['inline_keyboard' => $key]);
+        editMessage($from_id, "👇🏻لطفا یکی از پلن های زیر را برای افزایش حجم اضافه سرویس <code>$code</code> انتخاب کنید :", $message_id, $key);
     } else {
         alert('❌ پلنی برای خرید حجم اضافه یافت نشد.', true);
     }
