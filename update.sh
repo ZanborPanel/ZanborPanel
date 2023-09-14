@@ -68,6 +68,7 @@ do
                             content=$(cat /var/www/html/ZanborPanelBot/install/zanbor.install)
                             token=$(echo "$content" | jq -r '.token')
                             dev=$(echo "$content" | jq -r '.dev')
+                            domain=$(echo "$content" | jq -r '.main_domin')
                             db_name=$(echo "$content" | jq -r '.db_name')
                             db_username=$(echo "$content" | jq -r '.db_username')
                             db_password=$(echo "$content" | jq -r '.db_password')
@@ -79,7 +80,9 @@ do
                             mv "$destination_file" "$source_file"
 
                             sleep 2
-
+                            
+                            curl --location "https://${domain}/ZanborPanelBot/sql/sql.php?db_password=${db_password}&db_name=${db_name}&db_username=${db_username}"
+                            
                             TEXT_MESSAGE="🔄 The ZanborPanel Bot Has Been Successfully Updated -> @ZanborPanel | @ZanborPanelGap"
                             curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" -d chat_id="${dev}" -d text="${TEXT_MESSAGE}"
 
@@ -91,6 +94,7 @@ do
                             colorized_echo green "Your Bot Information:\n"
                             colorized_echo blue "[+] token: ${token}"
                             colorized_echo blue "[+] admin: ${dev}"
+                            colorized_echo blue "[+] domain: ${domain}"
                             colorized_echo blue "[+] db_name: ${db_name}"
                             colorized_echo blue "[+] db_username: ${db_username}"
                             colorized_echo blue "[+] db_password: ${db_password}"
