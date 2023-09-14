@@ -339,6 +339,7 @@ elseif (strpos($data, 'service_status-') !== false) {
         if (isset($getUser['links']) and $getUser != false) {
             $links = implode("\n\n", $getUser['links']) ?? 'NULL';
             $subscribe = (strpos($getUser['subscription_url'], 'http') !== false) ? $getUser['subscription_url'] : $panel['login_link'] . $getUser['subscription_url'];
+            $note = $sql->query("SELECT * FROM `notes` WHERE `code` = '$code'");
 
             $manage_service_btns = json_encode(['inline_keyboard' => [    
                 [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code.'-marzban']],
@@ -346,8 +347,13 @@ elseif (strpos($data, 'service_status-') !== false) {
                 [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code.'-marzban'], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code.'-marzban']],
                 [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
             ]]);
-
-            editMessage($from_id, sprintf($texts['your_service'], ($getUser['status'] == 'active') ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['used_traffic'], 'GB'), Conversion($getUser['data_limit'], 'GB'), date('Y-d-m H:i:s',  $getUser['expire']), $subscribe), $message_id, $manage_service_btns);
+            
+            if ($note->num_rows == 0) {
+                editMessage($from_id, sprintf($texts['your_service'], ($getUser['status'] == 'active') ? '🟢 فعال' : '🔴 غیرفعال', $getService['location'], base64_encode($code), Conversion($getUser['used_traffic'], 'GB'), Conversion($getUser['data_limit'], 'GB'), date('Y-d-m H:i:s',  $getUser['expire']), $subscribe), $message_id, $manage_service_btns);
+            } else {
+                $note = $note->fetch_assoc();
+                editMessage($from_id, sprintf($texts['your_service_with_note'], ($getUser['status'] == 'active') ? '🟢 فعال' : '🔴 غیرفعال', $note['note'],$getService['location'], base64_encode($code), Conversion($getUser['used_traffic'], 'GB'), Conversion($getUser['data_limit'], 'GB'), date('Y-d-m H:i:s',  $getUser['expire']), $subscribe), $message_id, $manage_service_btns);
+            }
         } else {
             $sql->query("DELETE FROM `orders` WHERE `code` = '$code'");
             alert('❌ سرویسی با این مشخصات یافت نشد.');
