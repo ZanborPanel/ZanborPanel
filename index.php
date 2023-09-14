@@ -1132,6 +1132,11 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     }
     
     elseif ($text == '⚙️ مدیریت پلن ها' or $data == 'back_cat') {
+        step('manage_plans');
+        sendMessage($from_id, "ℹ️ قصد مدیریت کردن کدام پلن را دارید ؟\n\n👇🏻 یکی از گزینه های زیر را انتخاب کنید :", $manage_plans);
+    }
+
+    elseif ($data == 'manage_main_plan') {
         step('manage_limit');
         $count = $sql->query("SELECT * FROM `category`")->num_rows;
         if ($count == 0) {

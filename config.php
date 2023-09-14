@@ -546,6 +546,11 @@ $add_plan_button = json_encode(['inline_keyboard' => [
     [['text' => '➕ پلن زمانی', 'callback_data' => 'add_date_plan'], ['text' => '➕ پلن حجمی', 'callback_data' => 'add_limit_plan']],
 ]]);
 
+$manage_plans = json_encode(['inline_keyboard' => [
+    [['text' => '🔧 پلن خرید سرویس', 'callback_data' => 'manage_main_plan']],
+    [['text' => '🔧 پلن زمانی', 'callback_data' => 'manage_date_plan'], ['text' => '🔧 پلن حجمی', 'callback_data' => 'manage_limit_plan']],
+]]);
+
 $manage_test_account = json_encode(['inline_keyboard' => [
     [['text' => ($test_account_setting['status'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_test_account_status'], ['text' => '▫️وضعیت :', 'callback_data' => 'null']],
     [['text' => ($test_account_setting['panel'] == 'none') ? '🔴 وصل نیست' : $sql->query("SELECT `name` FROM `panels` WHERE `code` = '{$test_account_setting['panel']}'")->fetch_assoc()['name'], 'callback_data' => 'change_test_account_panel'], ['text' => '▫️متصل به پنل :', 'callback_data' => 'null']],
