@@ -266,7 +266,7 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
                     $links = "";
                     foreach ($create_status['links'] as $link) $links .= $link . "\n\n";
 		    $subscribe = (strpos($create_status['subscription_url'], 'http') !== false) ? $create_status['subscription_url'] : $panel_fetch['login_link'] . $create_status['subscription_url'];
-                    $sql->query("UPDATE `users` SET `count_service` = count_service + 1, `test_account` = 'yes' WHERE `from_id` = '$from_id'");
+                    $sql->query("UPDATE `users` SET `count_service` = count_service + 1, `test_account` = 'no' WHERE `from_id` = '$from_id'");
                     $sql->query("INSERT INTO `test_account` (`from_id`, `location`, `date`, `volume`, `link`, `price`, `code`, `status`) VALUES ('$from_id', '{$panel_fetch['name']}', '{$test_account_setting['date']}', '{$test_account_setting['volume']}', '$links', '0', '$code', 'active')");
                     deleteMessage($from_id, $message_id + 1);
                     sendMessage($from_id, sprintf($texts['create_test_account'], $test_account_setting['time'], $subscribe, $panel_fetch['name'], $test_account_setting['time'], $test_account_setting['volume'], base64_encode($code)), $start_key);
@@ -1991,7 +1991,12 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         if ($copens->num_rows > 0) {
             $key[] = [['text' => '▫️حذف', 'callback_data' => 'null'], ['text' => '▫️وضعیت', 'callback_data' => 'null'], ['text' => '▫️تعداد', 'callback_data' => 'null'], ['text' => '▫️درصد', 'callback_data' => 'null'], ['text' => '▫️کد', 'callback_data' => 'null']];
             while ($row = $copens->fetch_assoc()) {
-                $key[] = [['text' => '🗑', 'callback_data' => 'delete_copen-'.$row['copen']], ['text' => ($copen_status['status'] == 'active') ? '🔴' : '🟢', 'callback_data' => 'change_status_copen-'.$row['copen']], ['text' => $row['count_use'], 'callback_data' => 'change_countuse_copen-'.$row['copen']], ['text' => $row['percent'], 'callback_data' => 'change_percent_copen-'.$row['copen']], ['text' => $row['copen'], 'callback_data' => 'change_code_copen-'.$row['copen']]];
+                if ($row['copen'] == $copen) {
+                    $status = ($copen_status['status'] == 'active') ? '🔴' : '🟢';
+                } else {
+                    $status = ($row['status'] == 'active') ? '🟢' : '🔴';
+                }
+                $key[] = [['text' => '🗑', 'callback_data' => 'delete_copen-'.$row['copen']], ['text' => $status, 'callback_data' => 'change_status_copen-'.$row['copen']], ['text' => $row['count_use'], 'callback_data' => 'change_countuse_copen-'.$row['copen']], ['text' => $row['percent'], 'callback_data' => 'change_percent_copen-'.$row['copen']], ['text' => $row['copen'], 'callback_data' => 'change_code_copen-'.$row['copen']]];
             }
             $key[] = [['text' => '🔙 بازگشت', 'callback_data' => 'back_copen']];
             $key = json_encode(['inline_keyboard' => $key]);
