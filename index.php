@@ -442,7 +442,8 @@ elseif (strpos($user['step'], 'set_note') !== false) {
 elseif (strpos($data, 'buy_extra_time') !== false) {
     $code = explode('-', $data)[1];
     $type = explode('-', $data)[2];
-    $category_date = $sql->query("SELECT * FROM `category_date`");
+    $category_date = $sql->query("SELECT * FROM `category_date` WHERE `status` = 'active'");
+
     if ($category_date->num_rows > 0) {
         while ($row = $category_date->fetch_assoc()) {
             $key[] = ['text' => $row['name'], 'callback_data' => 'select-'.$row['code']];
@@ -458,7 +459,8 @@ elseif (strpos($data, 'buy_extra_time') !== false) {
 elseif (strpos($data, 'buy_extra_volume') !== false) {
     $code = explode('-', $data)[1];
     $type = explode('-', $data)[2];
-    $category_limit = $sql->query("SELECT * FROM `category_limit`");
+    $category_limit = $sql->query("SELECT * FROM `category_limit` WHERE `status` = 'ative'");
+
     if ($category_limit->num_rows > 0) {
 
     } else {
