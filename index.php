@@ -541,6 +541,40 @@ elseif (strpos($data, 'select_extra_volume') !== false) {
     editMessage($from_id, sprintf($texts['create_buy_extra_volume_factor'], $service_code, $service_code, $plan['name'], number_format($plan['price']), $service_code), $message_id, $access_key);
 }
 
+elseif (strpos($data, 'confirm_extra_volume') !== false) {
+    alert($texts['wait']);
+    $service_code = explode('-', $data)[1];
+    $plan_code = explode('-', $data)[2];
+    $service = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'")->fetch_assoc();
+    $plan = $sql->query("SELECT * FROM `category_limit` WHERE `code` = '$plan_code'")->fetch_assoc();
+    $getService = $sql->query("SELECT * FROM `orders` WHERE `code` = '$service_code'")->fetch_assoc();
+    $panel = $sql->query("SELECT * FROM `panels` WHERE `name` = '{$getService['location']}'")->fetch_assoc();
+
+    if ($user['coin'] >= $plan['price']) {
+        if ($service['type'] == 'marzban') {
+            $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
+            $getUser = getUserInfo(base64_encode($service_code) . '_' . $from_id, $token, $panel['login_link']);
+            $response = Modifyuser(base64_encode($service_code) . '_' . $from_id, array('data_limit' => $getUser['data_limit'] += $plan['limit'] * pow(1024, 3)), $token, $panel['login_link']);
+        } elseif ($service['type'] == 'sanayi') {
+            include_once 'api/sanayi.php';
+            $panel_setting = $sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '{$panel['code']}'")->fetch_assoc();
+            $xui = new Sanayi($panel['login_link'], $panel['token']);
+            $getUser = $xui->getUserInfo(base64_encode($code) . '_' . $from_id, $panel_setting['inbound_id']);
+            $getUser = json_decode($getUser, true);
+            if ($getUser['status'] == true) {
+                $response = $xui->addExpire(base64_encode($service_code) . '_' . $from_id, $plan['date'], $panel_setting['inbound_id']);
+            } else {
+                alert('❌ Error --> not found service');
+            }
+        }
+
+        deleteMessage($from_id, $message_id);
+        sendMessage($from_id, sprintf($texts['success_extra_volume'], $plan['limit'], $plan['name'], number_format($plan['price'])), $start_key);
+    } else {
+        alert('❌ موجودی شما کافی نیست.', true);
+    }
+}
+
 elseif ($text == '💸 شارژ حساب') {
     step('diposet');
     sendMessage($from_id, $texts['diposet'], $back);
@@ -1160,6 +1194,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 	            [['text' => '🗑 حذف پنل', 'callback_data' => 'delete_panel-' . $code], ['text' => '✍️ تغییر نام', 'callback_data' => 'change_name_panel-' . $code]],
 	            [['text' => 'vmess - [' . $vmess_status . ']', 'callback_data' => 'change_protocol|vmess-' . $code], ['text' => 'trojan [' . $trojan_status . ']', 'callback_data' => 'change_protocol|trojan-' . $code], ['text' => 'vless [' . $vless_status . ']', 'callback_data' => 'change_protocol|vless-' . $code]],
 	            [['text' => 'shadowsocks [' . $shadowsocks_status . ']', 'callback_data' => 'change_protocol|shadowsocks-' . $code]],
+                [['text' => '⏺ تنظیم اینباند', 'callback_data' => 'set_inbound_marzban-'.$code]],
 	            [['text' => '🔙 بازگشت به لیست پنل ها', 'callback_data' => 'back_panellist']],
 	        ]]);
 	    } elseif ($info_server['type'] == 'sanayi') {
