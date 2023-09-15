@@ -1140,7 +1140,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         $info_panel = $sql->query("SELECT * FROM `panels` WHERE `code` = '$code'")->fetch_assoc();
         if ($info_panel['type'] == 'sanayi') {
             $sanayi_setting = $sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '{$info_panel['code']}'")->fetch_assoc();
-            sendMessage($from_id, "{$sanayi_setting['example_link']} || {$sanayi_setting['inbound_id']}")
+            sendMessage($from_id, "{$sanayi_setting['example_link']} || {$sanayi_setting['inbound_id']}");
             if ($sanayi_setting['example_link'] == 'none') {
                 alert('🔴 برای روشن کردن پنل سنایی ابتدا باید اینباند آیدی و نمونه سرویس را تنظیم کنید !');
                 exit;
