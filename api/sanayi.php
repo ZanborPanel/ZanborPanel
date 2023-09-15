@@ -270,7 +270,7 @@ class Sanayi{
             }
         }
 
-        $res = json_decode($result[$inbound_key]['settings'], true)['clients'][$client_key]['id'];
+        $res = json_decode($result[$inbound_key]['settings'], true)['clients'];
         return json_encode(['ok' => true, 'res' => $res], 448);
         // $getUser = json_decode(self::getUserInfo($remark, $id), true);
         // return json_encode($getUser, 448);
