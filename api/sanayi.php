@@ -289,7 +289,7 @@ class Sanayi{
                 "email" => $remark,
                 "limitIp" => 1,
                 "totalGB" => $total,
-                "expiryTime" => $expiryTime + (86400 * $date),
+                "expiryTime" => $expiryTime + (86400 * 1000 * $date),
                 "enable" => true,
                 "tgId" => "",
                 "subId" => $subId
