@@ -517,6 +517,7 @@ elseif (strpos($data, 'confirm_extra_time') !== false) {
             $getUser = json_decode($getUser, true);
             if ($getUser['status'] == true) {
                 $response = $xui->addExpire(base64_encode($service_code) . '_' . $from_id, $plan['date'], $panel_setting['inbound_id']);
+                sendMessage($from_id, $response);
             } else {
                 alert('❌ Error --> not found service');
             }
@@ -1198,7 +1199,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 	            [['text' => '🗑 حذف پنل', 'callback_data' => 'delete_panel-' . $code], ['text' => '✍️ تغییر نام', 'callback_data' => 'change_name_panel-' . $code]],
 	            [['text' => 'vmess - [' . $vmess_status . ']', 'callback_data' => 'change_protocol|vmess-' . $code], ['text' => 'trojan [' . $trojan_status . ']', 'callback_data' => 'change_protocol|trojan-' . $code], ['text' => 'vless [' . $vless_status . ']', 'callback_data' => 'change_protocol|vless-' . $code]],
 	            [['text' => 'shadowsocks [' . $shadowsocks_status . ']', 'callback_data' => 'change_protocol|shadowsocks-' . $code]],
-                [['text' => '⏺ تنظیم اینباند', 'callback_data' => 'set_inbound_marzban-'.$code]],
+                [['text' => 'ℹ️ مدیریت اینباند ها', 'callback_data' => 'manage_marzban_inbound-'.$code], ['text' => '⏺ تنظیم اینباند', 'callback_data' => 'set_inbound_marzban-'.$code]],
 	            [['text' => '🔙 بازگشت به لیست پنل ها', 'callback_data' => 'back_panellist']],
 	        ]]);
 	    } elseif ($info_server['type'] == 'sanayi') {
@@ -1229,7 +1230,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         sendMessage($from_id, "✅ اینباند ارسالی شما با موفقیت تنظیم شد.\n\n#️⃣ در صورت ارسال اینباند جدید آن را ارسال کنید و در غیر این صورت دستور /end_inbound را ارسال کنید یا روی دکمه زیر کلیک کنید.", $end_inbound);
     }
 
-    elseif ($text == '✔ اتمام و ثبت' and strpos($user['step'], 'send_inbound_marzban') !== false) {
+    elseif (($text == '✔ اتمام و ثبت' or $text == '/end_inbound') and strpos($user['step'], 'send_inbound_marzban') !== false) {
         step('none');
         sendMessage($from_id, "✅ همه اینباند های ارسالی شما ثبت شد.", $manage_server);
     }
