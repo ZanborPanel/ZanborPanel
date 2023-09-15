@@ -186,7 +186,7 @@ mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `notes` (
     `status` varchar(20) COLLATE utf8mb4_bin DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
 
-if ($sql->query("SELECT * FROM `sanayi_settings`")->num_rows == 0) $sql->query("INSERT INTO `sanayi_settings` (`inbound_id`, `example_link`, `flow`) VALUES ('none', 'none', 'offflow')");
+// if ($sql->query("SELECT * FROM `sanayi_settings`")->num_rows == 0) $sql->query("INSERT INTO `sanayi_settings` (`inbound_id`, `example_link`, `flow`) VALUES ('none', 'none', 'offflow')");
 if ($sql->query("SELECT * FROM `settings`")->num_rows == 0) $sql->query("INSERT INTO `settings` (`count_warn_ban`) VALUES ('3')");
 if ($sql->query("SELECT * FROM `spam_setting`")->num_rows == 0) $sql->query("INSERT INTO `spam_setting` (`type`) VALUES ('ban')");
 if ($sql->query("SELECT * FROM `test_account_setting`")->num_rows == 0) $sql->query("INSERT INTO `test_account_setting` (`panel`) VALUES ('none')");

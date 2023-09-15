@@ -953,6 +953,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
             $code = rand(11111111, 99999999);
             $session = str_replace([" ", "\n", "\t"], ['', '', ''], explode('session	', file_get_contents('cookie.txt'))[1]);
             $sql->query("INSERT INTO `panels` (`name`, `login_link`, `username`, `password`, `token`, `code`, `status`, `type`) VALUES ('{$info[0]}', '{$info[1]}', '{$info[2]}', '$text', '$session', '$code', 'inactive', 'sanayi')");
+            $sql->query("INSERT INTO `sanayi_panel_setting` (`code`, `inbound_id`, `example_link`, `flow`) VALUES ('$code', 'none', 'none', 'offflow')");
             sendMessage($from_id, "✅ ربات با موفقیت به پنل شما لاگین شد!\n\n▫️یوزرنیم : <code>{$info[2]}</code>\n▫️پسورد : <code>{$text}</code>\n▫️کد پیگیری : <code>$code</code>", $manage_server);
         } else {
             sendMessage($from_id, "❌ لاگین به پنل با خطا مواجه شد , بعد از گذشت چند دقیقه مجددا تلاش کنید !\n\n🎯 دلایل ممکن متصل نشدن ربات به پنل شما :↓\n\n◽باز نبودن پورت مورد نظر\n◽باز نشدن آدرس ارسالی\n◽آدرس ارسالی اشتباه\n◽یوزرنیم یا پسورد اشتباه\n◽قرار گرفتن آی‌پی در بلاک لیست\n◽️باز نبودن دسترسی CURL\n◽️مشکل کلی هاست", $manage_server);
