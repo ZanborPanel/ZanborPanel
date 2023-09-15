@@ -207,7 +207,7 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
 
         include_once 'api/sanayi.php';
         $xui = new Sanayi($panel['login_link'], $panel['token']);
-        $san_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
+        $san_setting = $sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '{$panel['code']}'")->fetch_assoc();
         $create_service = $xui->addClient($name, $san_setting['inbound_id'], $date, $limit);
         $create_status = json_decode($create_service, true);
         # ---------------- check errors ---------------- #
@@ -281,7 +281,7 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
                 $code = rand(111111, 999999);
                 $name = base64_encode($code) . '_' . $from_id;
                 $xui = new Sanayi($panel_fetch['login_link'], $panel_fetch['token']);
-                $san_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
+                $san_setting = $sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '{$panel_fetch['code']}'")->fetch_assoc();
                 $create_service = $xui->addClient($name, $san_setting['inbound_id'], $test_account_setting['volume'], ($test_account_setting['time'] / 24));
                 $create_status = json_decode($create_service, true);
                 $link = str_replace(['%s1', '%s2', '%s3'], [$create_status['results']['id'], str_replace(parse_url($panel_fetch['login_link'])['port'], json_decode($xui->getPortById($san_setting['inbound_id']), true)['port'], str_replace(['https://', 'http://'], ['', ''], $panel_fetch['login_link'])), $create_status['results']['remark']], $san_setting['example_link']);
@@ -362,7 +362,7 @@ elseif (strpos($data, 'service_status-') !== false) {
     } elseif ($panel['type'] == 'sanayi') {
 
         include_once 'api/sanayi.php';
-        $san_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
+        $san_setting = $sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '{$panel['code']}'")->fetch_assoc();
         $xui = new Sanayi($panel['login_link'], $panel['token']);
         $getUser = $xui->getUserInfo(base64_encode($code) . '_' . $from_id, $san_setting['inbound_id']);
         $getUser = json_decode($getUser, true);
@@ -1136,7 +1136,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         $code = explode('-', $data)[1];
         $info_panel = $sql->query("SELECT * FROM `panels` WHERE `code` = '$code'")->fetch_assoc();
         if ($info_panel['type'] == 'sanayi') {
-            $sanayi_setting = $sql->query("SELECT * FROM `sanayi_settings`")->fetch_assoc();
+            $sanayi_setting = $sql->query("SELECT * FROM `sanayi_panel_setting`")->fetch_assoc();
             if ($sanayi_setting['example_link'] == 'none') {
                 alert('🔴 برای روشن کردن پنل سنایی ابتدا باید اینباند آیدی و نمونه سرویس را تنظیم کنید !');
                 exit;
