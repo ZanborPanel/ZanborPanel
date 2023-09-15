@@ -10,6 +10,7 @@
 
 include_once 'config.php';
 include_once 'api/sanayi.php';
+# include_once  'api/hiddify.php';
 
 
 if ($data == 'join') {
