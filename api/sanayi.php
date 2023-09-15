@@ -270,10 +270,14 @@ class Sanayi{
             }
         }
 
-        $res = json_decode($result[$inbound_key]['settings'], true)['clients'];
-        return json_encode(['ok' => true, 'res' => $res], 448);
-        // $getUser = json_decode(self::getUserInfo($remark, $id), true);
-        // return json_encode($getUser, 448);
+        $uuids = json_decode($result[$inbound_key]['settings'], true)['clients'];
+        foreach ($uuids as $value) {
+            if ($value['email'] == $remark) {
+                $uuid = $value['id'];
+            }
+        }
+
+        return json_encode(['ok' => true, 'uuid' => $id], 448);
     }
 
     public function addVolume($remark, $limit, $id) {
