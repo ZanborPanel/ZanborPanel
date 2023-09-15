@@ -321,7 +321,83 @@ class Sanayi{
     }
 
     public function addVolume($remark, $limit, $id) {
-        return 'ok';
+        $url = $this->base_url . '/panel/inbound/list';
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_HTTPHEADER => $this->headers
+        ));
+        $result = json_decode(curl_exec($curl), true)['obj'];
+
+        $inbound_key = 0;
+        $client_key = 0;
+        foreach ($result as $i => $value) {
+            if ($value['id'] == $id) {
+                $inbound_key = $i;
+                $clients = $value['clientStats'];
+                foreach ($clients as $client) {
+                    if ($client['email'] == $remark) {
+                        $client_key = $$client['id'];
+                    }
+                }
+            }
+        }
+        
+        $client_uuids = json_decode($result[$inbound_key]['settings'], true)['clients'];
+        foreach ($client_uuids as $client_uuid) {
+            if ($client_uuid['email'] == $remark) {
+                $uuid = $client_uuid['id'];
+                $expiryTime = $client_uuid['expiryTime'];
+                $total = $client_uuid['totalGB'];
+                $subId = $client_uuid['subId'];
+            }
+        }
+
+        $update_url = $this->base_url . '/panel/inbound/updateClient/' . $uuid;
+
+        $settings = json_encode([
+            "clients" => [[
+                "id" => $uuid,
+                "flow" => "",
+                "email" => $remark,
+                "limitIp" => 1,
+                "totalGB" => $total + ($limit * pow(1024, 3)),
+                "expiryTime" => $expiryTime,
+                "enable" => true,
+                "tgId" => "",
+                "subId" => $subId
+            ]]
+        ]);
+        
+        $data = "id=$id&settings=$settings";
+        
+        # -------------- [ curl ] -------------- #
+
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_URL, $update_url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        $resp = json_decode(curl_exec($curl), true);
+        curl_close($curl);
+        
+        # -------------- [ curl ] -------------- #
+        
+        if($resp['success'] == true){
+            return json_encode(['status' => true, 'msg' => 'successful'], 448);
+        } else {
+            return json_encode(['status' => false, 'msg' => 'unsuccessful'], 448);
+        }
     }
     
 }
