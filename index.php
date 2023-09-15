@@ -793,8 +793,8 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     
     elseif ($text == '⏱ مدیریت اکانت تست' or $data == 'back_account_test') {
         step('none');
-        sendMessage($from_id, "{$test_account_setting['status']} - {$test_account_setting['panel']} - {$test_account_setting['volume']} - {$test_account_setting['time']}");
-        exit();
+        // sendMessage($from_id, "{$test_account_setting['status']} - {$test_account_setting['panel']} - {$test_account_setting['volume']} - {$test_account_setting['time']}");
+        // exit();
         if (isset($text)) {
             sendMessage($from_id, "⏱ به تنظیمات اکانت تست خوش آمدید.\n\n🟢 حجم را به صورت GB به ربات ارسال کنید | برای مثال 200 مگ : 0.2\n🟢 زمان را به صورت ساعت ارسال کنید | برای مثال 5 ساعت : 5\n\n👇🏻 یکی از گزینه های زیر را انتخاب کنید :\n◽️@ZanborPanel", $manage_test_account);
         } else {
