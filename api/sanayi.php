@@ -270,14 +270,14 @@ class Sanayi{
             }
         }
 
-        $uuids = json_decode($result[$inbound_key]['settings'], true)['clients'];
-        foreach ($uuids as $value) {
-            if ($value['email'] == $remark) {
-                $uuid = $value['id'];
+        $client_uuids = json_decode($result[$inbound_key]['settings'], true)['clients'];
+        foreach ($client_uuids as $client_uuid) {
+            if ($client_uuid['email'] == $remark) {
+                $uuid = $client_uuid['id'];
             }
         }
 
-        return json_encode(['ok' => true, 'uuid' => $id], 448);
+        return json_encode(['ok' => true, 'uuid' => $uuid], 448);
     }
 
     public function addVolume($remark, $limit, $id) {
