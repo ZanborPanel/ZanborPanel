@@ -1274,7 +1274,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     elseif (strpos($user['step'], 'set_example_link_sanayi') !== false) {
         if (strpos($text, '%s1') !== false and strpos($text, '%s3') !== false) {
             step('none');
-            $code = explode('-', $data)[1];
+            $code = explode('-', $user['step'])[1];
             if ($sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '$code'")->num_rows > 0) {
                 $sql->query("UPDATE `sanayi_panel_setting` SET `example_link` = '$text' WHERE `code` = '$code'");
             } else {
