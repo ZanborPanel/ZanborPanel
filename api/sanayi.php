@@ -241,8 +241,39 @@ class Sanayi{
     }
 
     public function addExpire($remark, $date, $id) {
-        $getUser = json_decode(self::getUserInfo($remark, $id), true);
-        return json_encode($getUser, 448);
+        $url = $this->base_url . '/panel/inbound/list';
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_HTTPHEADER => $this->headers
+        ));
+        $result = json_decode(curl_exec($curl), true)['obj'];
+
+        $inbound_key = 0;
+        $client_key = 0;
+        foreach ($result as $i => $value) {
+            if ($value['id'] == $id) {
+                $inbound_key = $i;
+                $clients = $value['clientStats'];
+                foreach ($clients as $client) {
+                    if ($client['email'] == $remark) {
+                        $client_key = $$client['id'];
+                    }
+                }
+            }
+        }
+
+        $res = json_decode($result[$inbound_key]['settings'], true)['clients'][$client_key]['id'];
+        return json_encode(['ok' => true, 'res' => $res], 448);
+        // $getUser = json_decode(self::getUserInfo($remark, $id), true);
+        // return json_encode($getUser, 448);
     }
 
     public function addVolume($remark, $limit, $id) {

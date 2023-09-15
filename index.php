@@ -514,12 +514,10 @@ elseif (strpos($data, 'confirm_extra_time') !== false) {
             $panel_setting = $sql->query("SELECT * FROM `sanayi_panel_setting` WHERE `code` = '{$panel['code']}'")->fetch_assoc();
             $xui = new Sanayi($panel['login_link'], $panel['token']);
             $getUser = $xui->getUserInfo(base64_encode($service_code) . '_' . $from_id, $panel_setting['inbound_id']);
-            sendMessage($from_id, $getUser);
             $getUser = json_decode($getUser, true);
             if ($getUser['status'] == true) {
                 $response = $xui->addExpire(base64_encode($service_code) . '_' . $from_id, $plan['date'], $panel_setting['inbound_id']);
                 sendMessage($from_id, $response);
-                sendMessage($from_id, "ok");
             } else {
                 alert('❌ Error --> not found service');
             }
