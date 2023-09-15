@@ -84,7 +84,8 @@ do
                             curl --location "https://${domain}/ZanborPanelBot/sql/sql.php?db_password=${db_password}&db_name=${db_name}&db_username=${db_username}"
                             echo -e "\n"
                             TEXT_MESSAGE="🔄 The ZanborPanel Bot Has Been Successfully Updated -> @ZanborPanel | @ZanborPanelGap"
-                            curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" -d chat_id="${dev}" -d text="${TEXT_MESSAGE}"
+                            TEXT_MESSAGE2="✅ ربات شما با موفقیت به آخرین نسخه آپدیت شد.\n\n#️⃣ اطلاعات ربات :\n\n▫️token: ${token}\n▫️admin: ${dev} \n▫️domain: ${domain}\n▫️db_name: ${db_name}\n▫️db_username: ${db_username}\n▫️db_password: ${db_password}\n\n🔎 - @ZanborPanel | @ZanborPanelGap"
+                            curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" -d chat_id="${dev}" -d text="${TEXT_MESSAGE2}"
 
                             sleep 2
                             clear
