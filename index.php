@@ -1050,6 +1050,8 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 
     # ------------- hedifay ------------- #
     elseif ($data == 'hedifay') {
+        alert('❌ در حال تکمیل کردن این بخش هستیم لطفا صبور باشید !', true);
+        exit();
         step('add_server_hedifay');
         deleteMessage($from_id, $message_id);
         sendMessage($from_id, "‌👈🏻⁩ اسم پنل خود را به دلخواه ارسال کنید :↓\n\nمثال نام : 🇳🇱 - هلند\n• این اسم برای کاربران قابل نمایش است.", $cancel_add_server);
@@ -1868,7 +1870,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 
     elseif (strpos($data, 'change_date_date-') !== false) {
         $code = explode('-', $data)[1];
-        step('change_date-'.$code);
+        step('change_date_date-'.$code);
         sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
     }
     
@@ -1880,7 +1882,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 
     elseif (strpos($data, 'change_limit_limit-') !== false) {
         $code = explode('-', $data)[1];
-        step('change_limit-'.$code);
+        step('change_limit_limit-'.$code);
         sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
     }
     
@@ -1892,13 +1894,13 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 
     elseif (strpos($data, 'change_price_date-') !== false) {
         $code = explode('-', $data)[1];
-        step('change_price-'.$code);
+        step('change_price_date-'.$code);
         sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
     }
 
     elseif (strpos($data, 'change_price_limit-') !== false) {
         $code = explode('-', $data)[1];
-        step('change_price-'.$code);
+        step('change_price_limit-'.$code);
         sendMessage($from_id, "🔰مقدار جدید را به صورت عدد صحیح و لاتین ارسال کنید :", $back_panel);
     }
     
@@ -1910,13 +1912,13 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 
     elseif (strpos($data, 'change_name_date-') !== false) {
         $code = explode('-', $data)[1];
-        step('change_namee-'.$code);
+        step('change_name_date-'.$code);
         sendMessage($from_id, "🔰نام جدید را ارسال کنید :", $back_panel);
     }
 
     elseif (strpos($data, 'change_name_limit-') !== false) {
         $code = explode('-', $data)[1];
-        step('change_namee-'.$code);
+        step('change_name_limit-'.$code);
         sendMessage($from_id, "🔰نام جدید را ارسال کنید :", $back_panel);
     }
     
@@ -1926,11 +1928,25 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         $sql->query("UPDATE `category` SET `date` = '$text' WHERE `code` = '$code' LIMIT 1");
         sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
     }
+
+    elseif (strpos($user['step'], 'change_date_date-') !== false and $text != '⬅️ بازگشت به مدیریت') {
+        $code = explode('-', $user['step'])[1];
+        step('none');
+        $sql->query("UPDATE `category_date` SET `date` = '$text' WHERE `code` = '$code' LIMIT 1");
+        sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
+    }
     
     elseif (strpos($user['step'], 'change_limit-') !== false and $text != '⬅️ بازگشت به مدیریت') {
         $code = explode('-', $user['step'])[1];
         step('none');
         $sql->query("UPDATE `category` SET `limit` = '$text' WHERE `code` = '$code' LIMIT 1");
+        sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
+    }
+
+    elseif (strpos($user['step'], 'change_limit_limit-') !== false and $text != '⬅️ بازگشت به مدیریت') {
+        $code = explode('-', $user['step'])[1];
+        step('none');
+        $sql->query("UPDATE `category_limit` SET `limit` = '$text' WHERE `code` = '$code' LIMIT 1");
         sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
     }
     
@@ -1940,11 +1956,39 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         $sql->query("UPDATE `category` SET `price` = '$text' WHERE `code` = '$code' LIMIT 1");
         sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
     }
+
+    elseif (strpos($user['step'], 'change_price_date-') !== false and $text != '⬅️ بازگشت به مدیریت') {
+        $code = explode('-', $user['step'])[1];
+        step('none');
+        $sql->query("UPDATE `category_date` SET `price` = '$text' WHERE `code` = '$code' LIMIT 1");
+        sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
+    }
+
+    elseif (strpos($user['step'], 'change_price_limit-') !== false and $text != '⬅️ بازگشت به مدیریت') {
+        $code = explode('-', $user['step'])[1];
+        step('none');
+        $sql->query("UPDATE `category_limit` SET `price` = '$text' WHERE `code` = '$code' LIMIT 1");
+        sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
+    }
     
     elseif (strpos($user['step'], 'change_namee-') !== false and $text != '⬅️ بازگشت به مدیریت') {
         $code = explode('-', $user['step'])[1];
         step('none');
         $sql->query("UPDATE `category` SET `name` = '$text' WHERE `code` = '$code' LIMIT 1");
+        sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
+    }
+
+    elseif (strpos($user['step'], 'change_name_date-') !== false and $text != '⬅️ بازگشت به مدیریت') {
+        $code = explode('-', $user['step'])[1];
+        step('none');
+        $sql->query("UPDATE `category_date` SET `name` = '$text' WHERE `code` = '$code' LIMIT 1");
+        sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
+    }
+
+    elseif (strpos($user['step'], 'change_name_limit-') !== false and $text != '⬅️ بازگشت به مدیریت') {
+        $code = explode('-', $user['step'])[1];
+        step('none');
+        $sql->query("UPDATE `category_limit` SET `name` = '$text' WHERE `code` = '$code' LIMIT 1");
         sendMessage($from_id, "✅ اطلاعات ارسالی شما با موفقیت ثبت شد.", $manage_server);
     }
     
