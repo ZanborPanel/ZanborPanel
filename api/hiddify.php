@@ -8,7 +8,7 @@ class Hiddify
     private $session;
     private $headers;
 
-    public function __construct($base_url, $complate_url, $session)
+    public function __construct($base_url, $complate_url)
     {
         $this->base_url = $base_url;
         $this->complate_url = $complate_url;
@@ -42,13 +42,14 @@ class Hiddify
 
     private function getCookie($url = null)
     {
-        $url = is_null($url) ? $this->complate_url . "/user/new/?url=%2F8itQkDU30qCOwzUkK3LnMf58qfna%2F276dbb23-95d8-4802-a741-bb0474bd9b71%2Fadmin%2Fuser%2F" : $url;
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($curl);
-        curl_close($curl);
-        return $response;
+        // $url = is_null($url) ? $this->complate_url . "/user/new/?url=%2F8itQkDU30qCOwzUkK3LnMf58qfna%2F276dbb23-95d8-4802-a741-bb0474bd9b71%2Fadmin%2Fuser%2F" : $url;
+        // $curl = curl_init($url);
+        // curl_setopt($curl, CURLOPT_URL, $url);
+        // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        // $response = curl_exec($curl);
+        // curl_close($curl);
+        // return $response;
+        return 'ok';
     }
 
 }
