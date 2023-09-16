@@ -1,11 +1,10 @@
 <?php
 
-# -- #
 /**
 * Project name: ZanborPanel
 * Channel: @ZanborPanel
 * Group: @ZanborPanelGap
- * Version: 2.5
+* Version: 2.5
 **/
 
 include_once 'config.php';
@@ -2639,5 +2638,5 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 * Project name: ZanborPanel
 * Channel: @ZanborPanel
 * Group: @ZanborPanelGap
- * Version: 2.5
+* Version: 2.5
 **/
