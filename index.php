@@ -548,7 +548,7 @@ elseif (strpos($data, 'confirm_extra_time') !== false) {
         deleteMessage($from_id, $message_id);
         sendMessage($from_id, sprintf($texts['success_extra_time'], $plan['date'], $plan['name'], number_format($plan['price'])), $start_key);
     } else {
-        alert('❌ موجودی شما کافی نیست.', true);
+        alert($texts['not_coin_extra'], true);
     }
 }
 
@@ -596,7 +596,7 @@ elseif (strpos($data, 'confirm_extra_volume') !== false) {
         deleteMessage($from_id, $message_id);
         sendMessage($from_id, sprintf($texts['success_extra_volume'], $plan['limit'], $plan['name'], number_format($plan['price'])), $start_key);
     } else {
-        alert('❌ موجودی شما کافی نیست.', true);
+        alert($texts['not_coin_extra'], true);
     }
 }
 
@@ -605,7 +605,7 @@ elseif ($text == '💸 شارژ حساب') {
         if ($auth_setting['iran_number'] == 'active' or $auth_setting['virtual_number'] == 'active' or $auth_setting['both_number'] == 'active') {
             if (is_null($user['phone'])) {
                 step('authentication');
-                sendMessage($from_id, "لطفا شماره همراه خود را با استفاده از دکمه '🔒 تایید و ارسال شماره' ارسال نمایید.\n\n📌 برای جلوگیری از سواستفاده برخی افراد نیاز است شماره خود را ارسال و تایید نمایید. شماره همراه شما در جایی استفاده نخواهد شد و اینکار تنها برای احراز هویت شماست.", $send_phone);
+                sendMessage($from_id, $texts['send_phone'], $send_phone);
             } else {
                 step('diposet');
                 sendMessage($from_id, $texts['diposet'], $back);
@@ -627,26 +627,26 @@ elseif ($user['step'] == 'authentication') {
             if ($auth_setting['iran_number'] == 'active') {
                 if (strpos($contact->phone_number, '+98') !== false) {
                     $sql->query("UPDATE `users` SET `phone` = '{$contact->phone_number}' WHERE `from_id` = '$from_id'");
-                    sendMessage($from_id, "✅ شماره شما با موفقیت در ربات ثبت و احراز شد !\n\n⬅️ به منوی اصلی ربات بازگشتید.", $start_key);
+                    sendMessage($from_id, $texts['send_phone_success'], $start_key);
                 } else {
-                    sendMessage($from_id, "⚠️ کاربر گرامی، شارژ حساب تنها با شماره ایران امکان پذیر است.s", $back);
+                    sendMessage($from_id, $texts['only_iran'], $back);
                 }
             } elseif ($auth_setting['virtual_number'] == 'active') {
                 if (strpos($contact->phone_number, '+98') === false) {
                     $sql->query("UPDATE `users` SET `phone` = '{$contact->phone_number}' WHERE `from_id` = '$from_id'");
-                    sendMessage($from_id, "✅ شماره شما با موفقیت در ربات ثبت و احراز شد !\n\n⬅️ به منوی اصلی ربات بازگشتید.", $start_key);
+                    sendMessage($from_id, $texts['send_phone_success'], $start_key);
                 } else {
-                    sendMessage($from_id, "⚠️ کاربر گرامی، شارژ حساب تنها با شماره مجازی امکان پذیر است.", $back);
+                    sendMessage($from_id, $texts['only_virtual'], $back);
                 }
             } elseif ($auth_setting['both_number'] == 'active') {
                 $sql->query("UPDATE `users` SET `phone` = '{$contact->phone_number}' WHERE `from_id` = '$from_id'");
-                sendMessage($from_id, "✅ شماره شما با موفقیت در ربات ثبت و احراز شد !\n\n⬅️ به منوی اصلی ربات بازگشتید.", $start_key);   
+                sendMessage($from_id, $texts['send_phone_success'], $start_key);   
             }
         } else {
-            sendMessage($from_id, "❌ فقط از طریق دکمه زیر شماره خود را ارسال کنید !", $send_phone);    
+            sendMessage($from_id, $texts['send_phone_with_below_btn'], $send_phone);    
         }
     } else {
-        sendMessage($from_id, "❌ فقط از طریق دکمه زیر شماره خود را ارسال کنید !", $send_phone);
+        sendMessage($from_id, $texts['send_phone_with_below_btn'], $send_phone);
     }
 }
 
