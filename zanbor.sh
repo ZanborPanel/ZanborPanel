@@ -91,7 +91,7 @@ sudo systemctl start mysql.service
 sudo systemctl enable apache2
 sudo systemctl start apache2
 
-ufw allow 'Apache'
+ufw allow 'Apache Full'
 sudo systemctl restart apache2
 
 colorized_echo green "Installing Zanbor . . ."
@@ -132,9 +132,9 @@ fi
 sudo ufw allow 80
 sudo ufw allow 443 
 sudo apt install letsencrypt -y
+sudo apt-get -y install certbot python3-certbot-apache
 sudo systemctl enable certbot.timer
 sudo certbot certonly --standalone --agree-tos --preferred-challenges http -d $DOMAIN
-sudo apt install python3-certbot-apache -y
 sudo certbot --apache --agree-tos --preferred-challenges http -d $DOMAIN
 
 wait
@@ -143,7 +143,7 @@ echo -e " \n"
 
 wait
 
-read -p "[+] Enter the [root] user passord: " ROOT_PASSWORD
+read -p "[+] Enter the [root (MySql)] user passord: " ROOT_PASSWORD
 randdbpass=$(openssl rand -base64 8 | tr -dc 'a-zA-Z0-9' | head -c 10)
 randdbdb=$(pwgen -A 8 1)
 randdbname=$(openssl rand -base64 8 | tr -dc 'a-zA-Z0-9' | head -c 4)
@@ -227,7 +227,7 @@ colorized_echo blue "\n\nSet Webhook Status:"
 curl -F "url=https://${DOMAIN}/ZanborPanelBot/index.php" "https://api.telegram.org/bot${TOKEN}/setWebhook"
 
 colorized_echo blue "\n\nSend Message Status:"
-TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed -> @ZanborPanel | @ZanborPanelGap"
+TEXT_MESSAGE="✅ The ZanborPanel Bot Has Been Successfully Installed !"
 curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" -d chat_id="${CHAT_ID}" -d text="${TEXT_MESSAGE}"
 echo -e "\n\n"
 
