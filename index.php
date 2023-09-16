@@ -953,7 +953,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         }
         $manage_test_account = json_encode(['inline_keyboard' => [
             [['text' => ($status == 'active') ? '🔴' : '🟢', 'callback_data' => 'change_test_account_status'], ['text' => '▫️وضعیت :', 'callback_data' => 'null']],
-            [['text' => ($test_account_setting['panel'] == 'none') ? '🔴 وصل نیست' : $sql->query("SELECT `name` FROM `panels` WHERE `code` = '{$test_account_setting['panel']}'")->fetch_assoc()['name'], 'callback_data' => 'change_test_account_panel'], ['text' => '▫️متصل به پنل :', 'callback_data' => 'null']],
+            [['text' => ($test_account_setting['panel'] == 'none') ? '🔴 وصل نیست' : '🟢 وصل است', 'callback_data' => 'change_test_account_panel'], ['text' => '▫️متصل به پنل :', 'callback_data' => 'null']],
             [['text' => $sql->query("SELECT * FROM `test_account`")->num_rows, 'callback_data' => 'null'], ['text' => '▫️تعداد اکانت تست :', 'callback_data' => 'null']],
             [['text' => $test_account_setting['volume'] . ' GB', 'callback_data' => 'change_test_account_volume'], ['text' => '▫️حجم :', 'callback_data' => 'null']],
             [['text' => $test_account_setting['time'] . ' ساعت', 'callback_data' => 'change_test_account_time'], ['text' => '▫️زمان :', 'callback_data' => 'null']],
@@ -973,7 +973,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
                 $sql->query("UPDATE `test_account_setting` SET `volume` = '$text'");
                 $manage_test_account = json_encode(['inline_keyboard' => [
                     [['text' => ($status == 'active') ? '🔴' : '🟢', 'callback_data' => 'change_test_account_status'], ['text' => '▫️وضعیت :', 'callback_data' => 'null']],
-                    [['text' => ($test_account_setting['panel'] == 'none') ? '🔴 وصل نیست' : $sql->query("SELECT `name` FROM `panels` WHERE `code` = '{$test_account_setting['panel']}'")->fetch_assoc()['name'], 'callback_data' => 'change_test_account_panel'], ['text' => '▫️متصل به پنل :', 'callback_data' => 'null']],
+                    [['text' => ($test_account_setting['panel'] == 'none') ? '🔴 وصل نیست' : '🟢 وصل است', 'callback_data' => 'change_test_account_panel'], ['text' => '▫️متصل به پنل :', 'callback_data' => 'null']],
                     [['text' => $sql->query("SELECT * FROM `test_account`")->num_rows, 'callback_data' => 'null'], ['text' => '▫️تعداد اکانت تست :', 'callback_data' => 'null']],
                     [['text' => $text . ' GB', 'callback_data' => 'change_test_account_volume'], ['text' => '▫️حجم :', 'callback_data' => 'null']],
                     [['text' => $test_account_setting['time'] . ' ساعت', 'callback_data' => 'change_test_account_time'], ['text' => '▫️زمان :', 'callback_data' => 'null']],
@@ -997,7 +997,7 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
                 $sql->query("UPDATE `test_account_setting` SET `time` = '$text'");
                 $manage_test_account = json_encode(['inline_keyboard' => [
                     [['text' => ($status == 'active') ? '🔴' : '🟢', 'callback_data' => 'change_test_account_status'], ['text' => '▫️وضعیت :', 'callback_data' => 'null']],
-                    [['text' => ($test_account_setting['panel'] == 'none') ? '🔴 وصل نیست' : $sql->query("SELECT `name` FROM `panels` WHERE `code` = '{$test_account_setting['panel']}'")->fetch_assoc()['name'], 'callback_data' => 'change_test_account_panel'], ['text' => '▫️متصل به پنل :', 'callback_data' => 'null']],
+                    [['text' => ($test_account_setting['panel'] == 'none') ? '🔴 وصل نیست' : '🟢 وصل است', 'callback_data' => 'change_test_account_panel'], ['text' => '▫️متصل به پنل :', 'callback_data' => 'null']],
                     [['text' => $sql->query("SELECT * FROM `test_account`")->num_rows, 'callback_data' => 'null'], ['text' => '▫️تعداد اکانت تست :', 'callback_data' => 'null']],
                     [['text' => $test_account_setting['volume'] . ' GB', 'callback_data' => 'change_test_account_volume'], ['text' => '▫️حجم :', 'callback_data' => 'null']],
                     [['text' => $text . ' ساعت', 'callback_data' => 'change_test_account_time'], ['text' => '▫️زمان :', 'callback_data' => 'null']],
@@ -1052,9 +1052,9 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     elseif ($data == 'hedifay') {
         alert('❌ در حال تکمیل کردن این بخش هستیم لطفا صبور باشید !', true);
         exit();
-        step('add_server_hedifay');
-        deleteMessage($from_id, $message_id);
-        sendMessage($from_id, "‌👈🏻⁩ اسم پنل خود را به دلخواه ارسال کنید :↓\n\nمثال نام : 🇳🇱 - هلند\n• این اسم برای کاربران قابل نمایش است.", $cancel_add_server);
+        // step('add_server_hedifay');
+        // deleteMessage($from_id, $message_id);
+        // sendMessage($from_id, "‌👈🏻⁩ اسم پنل خود را به دلخواه ارسال کنید :↓\n\nمثال نام : 🇳🇱 - هلند\n• این اسم برای کاربران قابل نمایش است.", $cancel_add_server);
     }
 
     elseif ($user['step'] == 'add_server_hedifay') {
