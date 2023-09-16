@@ -592,8 +592,53 @@ elseif (strpos($data, 'confirm_extra_volume') !== false) {
 }
 
 elseif ($text == '💸 شارژ حساب') {
-    step('diposet');
-    sendMessage($from_id, $texts['diposet'], $back);
+    if ($auth_setting['status'] == 'active') {
+        if ($auth_setting['iran_number'] == 'active' or $auth_setting['virtual_number'] == 'active' or $auth_setting['both_number'] == 'active') {
+            if (is_null($user['phone'])) {
+                step('authentication');
+                sendMessage($from_id, "لطفا شماره همراه خود را با استفاده از دکمه '🔒 تایید و ارسال شماره' ارسال نمایید.\n\n📌 برای جلوگیری از سواستفاده برخی افراد نیاز است شماره خود را ارسال و تایید نمایید. شماره همراه شما در جایی استفاده نخواهد شد و اینکار تنها برای احراز هویت شماست.", $send_phone);
+            } else {
+                step('diposet');
+                sendMessage($from_id, $texts['diposet'], $back);
+            }
+        } else {
+            step('diposet');
+            sendMessage($from_id, $texts['diposet'], $back);
+        }
+    } else {
+        step('diposet');
+        sendMessage($from_id, $texts['diposet'], $back);
+    }
+}
+
+elseif ($user['step'] == 'authentication') {
+    $contact = $update->message->contact;
+    if (isset($contact)) {
+        if ($contact->user_id == $from_id) {
+            if ($auth_setting['iran_number'] == 'active') {
+                if (strpos($contact->phone_number, '+98') !== false) {
+                    $sql->query("UPDATE `users` SET `phone` = '{$contact->phone_number}' WHERE `from_id` = '$from_id'");
+                    sendMessage($from_id, "✅ شماره شما با موفقیت در ربات ثبت و احراز شد !\n\n⬅️ به منوی اصلی ربات بازگشتید.", $start_key);
+                } else {
+                    sendMessage($from_id, "⚠️ کاربر گرامی، شارژ حساب تنها با شماره ایران امکان پذیر است.s", $back);
+                }
+            } elseif ($auth_setting['virtual_number'] == 'active') {
+                if (strpos($contact->phone_number, '+98') === false) {
+                    $sql->query("UPDATE `users` SET `phone` = '{$contact->phone_number}' WHERE `from_id` = '$from_id'");
+                    sendMessage($from_id, "✅ شماره شما با موفقیت در ربات ثبت و احراز شد !\n\n⬅️ به منوی اصلی ربات بازگشتید.", $start_key);
+                } else {
+                    sendMessage($from_id, "⚠️ کاربر گرامی، شارژ حساب تنها با شماره مجازی امکان پذیر است.", $back);
+                }
+            } elseif ($auth_setting['both_number'] == 'active') {
+                $sql->query("UPDATE `users` SET `phone` = '{$contact->phone_number}' WHERE `from_id` = '$from_id'");
+                sendMessage($from_id, "✅ شماره شما با موفقیت در ربات ثبت و احراز شد !\n\n⬅️ به منوی اصلی ربات بازگشتید.", $start_key);   
+            }
+        } else {
+            sendMessage($from_id, "❌ فقط از طریق دکمه زیر شماره خود را ارسال کنید !", $send_phone);    
+        }
+    } else {
+        sendMessage($from_id, "❌ فقط از طریق دکمه زیر شماره خود را ارسال کنید !", $send_phone);
+    }
 }
 
 elseif ($user['step'] == 'diposet') {
@@ -802,44 +847,56 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     }
 
     elseif ($data == 'change_status_auth_iran') {
-        if ($auth_setting['virtual_number'] == 'inactive' and $auth_setting['both_number'] == 'inactive') {
-            if ($auth_setting['iran_number'] == 'active') {
-                $sql->query("UPDATE `auth_setting` SET `iran_number` = 'inactive'");
+        if ($auth_setting['status'] == 'active') {
+            if ($auth_setting['virtual_number'] == 'inactive' and $auth_setting['both_number'] == 'inactive') {
+                if ($auth_setting['iran_number'] == 'active') {
+                    $sql->query("UPDATE `auth_setting` SET `iran_number` = 'inactive'");
+                } else {
+                    $sql->query("UPDATE `auth_setting` SET `iran_number` = 'active'");
+                }
+                alert('✅ تغییرات با موفقیت انجام شد.', true);
+                editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
             } else {
-                $sql->query("UPDATE `auth_setting` SET `iran_number` = 'active'");
+                alert('⚠️ برای فعال کردن سیستم احراز هویت شماره های ایرانی باید بخش ( 🏴󠁧󠁢󠁥󠁮󠁧󠁿 شماره مجازی ) و ( 🌎 همه شماره ها ) غیرفعال شود !', true);
             }
-            alert('✅ تغییرات با موفقیت انجام شد.', true);
-            editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
         } else {
-            alert('⚠️ برای فعال کردن سیستم احراز هویت شماره های ایرانی باید بخش ( 🏴󠁧󠁢󠁥󠁮󠁧󠁿 شماره مجازی ) و ( 🌎 همه شماره ها ) غیرفعال شود !', true);
+            alert('🔴 برای فعال سازی این بخش ابتدا باید ( ℹ️ سیستم احراز هویت ) را فعال کنید !', true);
         }
     }
 
     elseif ($data == 'change_status_auth_virtual') {
-        if ($auth_setting['iran_number'] == 'inactive' and $auth_setting['both_number'] == 'inactive') {
-            if ($auth_setting['virtual_number'] == 'active') {
-                $sql->query("UPDATE `auth_setting` SET `virtual_number` = 'inactive'");
+        if ($auth_setting['status'] == 'active') {
+            if ($auth_setting['iran_number'] == 'inactive' and $auth_setting['both_number'] == 'inactive') {
+                if ($auth_setting['virtual_number'] == 'active') {
+                    $sql->query("UPDATE `auth_setting` SET `virtual_number` = 'inactive'");
+                } else {
+                    $sql->query("UPDATE `auth_setting` SET `virtual_number` = 'active'");
+                }
+                alert('✅ تغییرات با موفقیت انجام شد.', true);
+                editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
             } else {
-                $sql->query("UPDATE `auth_setting` SET `virtual_number` = 'active'");
+                alert('⚠️ برای فعال کردن سیستم احراز هویت شماره های مجازی باید بخش ( 🇮🇷 شماره ایران ) و ( 🌎 همه شماره ها ) غیرفعال شود !', true);
             }
-            alert('✅ تغییرات با موفقیت انجام شد.', true);
-            editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
         } else {
-            alert('⚠️ برای فعال کردن سیستم احراز هویت شماره های مجازی باید بخش ( 🇮🇷 شماره ایران ) و ( 🌎 همه شماره ها ) غیرفعال شود !', true);
+            alert('🔴 برای فعال سازی این بخش ابتدا باید ( ℹ️ سیستم احراز هویت ) را فعال کنید !', true);
         }
     }
 
     elseif ($data == 'change_status_auth_all_country') {
-        if ($auth_setting['iran_number'] == 'inactive' and $auth_setting['virtual_number'] == 'inactive') {
-            if ($auth_setting['both_number'] == 'active') {
-                $sql->query("UPDATE `auth_setting` SET `both_number` = 'inactive'");
+        if ($auth_setting['status'] == 'active') {
+            if ($auth_setting['iran_number'] == 'inactive' and $auth_setting['virtual_number'] == 'inactive') {
+                if ($auth_setting['both_number'] == 'active') {
+                    $sql->query("UPDATE `auth_setting` SET `both_number` = 'inactive'");
+                } else {
+                    $sql->query("UPDATE `auth_setting` SET `both_number` = 'active'");
+                }
+                alert('✅ تغییرات با موفقیت انجام شد.', true);
+                editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
             } else {
-                $sql->query("UPDATE `auth_setting` SET `both_number` = 'active'");
+                alert('⚠️ برای فعال کردن سیستم احراز هویت همه شماره ها باید بخش ( 🇮🇷 شماره ایران ) و ( 🏴󠁧󠁢󠁥󠁮󠁧󠁿 شماره مجازی ) غیرفعال شود !', true);
             }
-            alert('✅ تغییرات با موفقیت انجام شد.', true);
-            editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
         } else {
-            alert('⚠️ برای فعال کردن سیستم احراز هویت همه شماره ها باید بخش ( 🇮🇷 شماره ایران ) و ( 🏴󠁧󠁢󠁥󠁮󠁧󠁿 شماره مجازی ) غیرفعال شود !', true);
+            alert('🔴 برای فعال سازی این بخش ابتدا باید ( ℹ️ سیستم احراز هویت ) را فعال کنید !', true);
         }
     }
     // ----------- manage status ----------- //

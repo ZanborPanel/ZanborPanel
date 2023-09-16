@@ -547,6 +547,11 @@ $select_diposet_payment = json_encode(['inline_keyboard' => [
     [['text' => '❌ لغو عملیات', 'callback_data' => 'cancel_payment_proccess']]
 ]]);
 
+$send_phone = json_encode(['keyboard' => [
+    [['text' => '🔒 تایید و ارسال شماره', 'request_contact' => true]],
+    [['text' => '🔙 بازگشت']]
+], 'resize_keyboard' => true]);
+
 $panel = json_encode(['keyboard' => [
     [['text' => '📞 اطلاعیه آپدیت ربات']],
     [['text' => '🔑 سیستم احراز هویت']],
