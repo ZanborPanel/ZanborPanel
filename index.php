@@ -163,21 +163,33 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
         sendmessage($from_id, sprintf($texts['create_error'], 0), $start_key);
         exit();
     }
-    # ---------------- set proxies proccess ---------------- #
-    $protocols = explode('|', $panel['protocols']);
-    unset($protocols[count($protocols)-1]);
-    $proxies = array();
-    foreach ($protocols as $protocol) {
-    	if ($protocol == 'vless' and $panel['flow'] == 'flowon'){
-            $proxies[$protocol] = array('flow' => 'xtls-rprx-vision');
-        } else {
-        	$proxies[$protocol] = array();
-        }
-    }
     # ---------------- create service proccess ---------------- #
     if ($panel['type'] == 'marzban') {
+        # ---------------- set proxies and inbounds proccess for marzban panel ---------------- #
+        $protocols = explode('|', $panel['protocols']);
+        unset($protocols[count($protocols)-1]);
+        unset($protocols[0]);
+        $proxies = array();
+        foreach ($protocols as $protocol) {
+            if ($protocol == 'vless' and $panel['flow'] == 'flowon'){
+                $proxies[$protocol] = array('flow' => 'xtls-rprx-vision');
+            } else {
+                $proxies[$protocol] = array();
+            }
+        }
+        sendMessage($from_id, json_encode($protocols, 448));
+        sendMessage($from_id, json_encode($proxies, 448));
+        $panel_inbounds = $sql->query("SELECT * FROM `marzban_inbounds` WHERE `panel` = '{$panel['code']}'");
+        $inbounds = array();
+        foreach ($protocols as $protocol) {
+            while ($row = $panel_inbounds->fetch_assoc()) {
+                $inbounds[$protocol][] = $row['inbound'];
+            }
+        }
+        sendMessage($from_id, json_encode($inbounds, 448));
+        # ---------------- create service ---------------- #
         $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
-        $create_service = createService($name, convertToBytes($limit.'GB'), strtotime("+ $date day"), $proxies, $token, $panel['login_link']);
+        $create_service = createService($name, convertToBytes($limit.'GB'), strtotime("+ $date day"), $proxies, ($panel_inbounds->num_rows > 0) ? $inbounds : 'null', $token, $panel['login_link']);
         $create_status = json_decode($create_service, true);
         # ---------------- check errors ---------------- #
         if (!isset($create_status['username'])) {
@@ -770,6 +782,12 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         base64_decode('c2VuZE1lc3NhZ2U=')($from_id, base64_decode('8J+QnSB8INio2LHYp9uMINin2LfZhNin2Lkg2KfYsiDYqtmF2KfZhduMINii2b7Yr9uM2Kog2YfYpyDZiCDZhtiz2K7ZhyDZh9in24wg2KjYudiv24wg2LHYqNin2Kog2LLZhtio2YjYsSDZvtmG2YQg2K/YsSDaqdin2YbYp9mEINiy2YbYqNmI2LEg2b7ZhtmEINi52LbZiCDYtNuM2K8gOuKGkwril73vuI9AWmFuYm9yUGFuZWwK8J+QnSB8INmIINmH2YXahtmG24zZhiDYqNix2KfbjCDZhti42LEg2K/Zh9uMINii2b7Yr9uM2Kog24zYpyDYqNin2q8g2YfYpyDYqNmHINqv2LHZiNmHINiy2YbYqNmI2LEg2b7ZhtmEINio2b7bjNmI2YbYr9uM2K8gOuKGkwril73vuI9AWmFuYm9yUGFuZWxHYXAK8J+QnSB8INmG2YXZiNmG2Ycg2LHYqNin2Kog2KLYrtix24zZhiDZhtiz2K7ZhyDYsdio2KfYqiDYstmG2KjZiNixINm+2YbZhCA64oaTCuKXve+4j0BaYW5ib3JQYW5lbEJvdA=='), $panel);
     }
     
+    // ----------- manage auth ----------- //
+    elseif ($text == '🔑 سیستم احراز هویت') {
+        sendMessage($from_id, "🀄️ به بخش سیستم احراز هویت ربات خوش آمدید !\n\n📚 راهنمای این بخش :↓\n\n✅ : فعال \n❌ : غیرفعال", $manage_auth);
+    }
+
+
     // ----------- manage status ----------- //
     elseif($text == '👤 آمار ربات'){
         $state1 = $sql->query("SELECT `status` FROM `users`")->num_rows;
@@ -1228,8 +1246,16 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     elseif (strpos($user['step'], 'send_inbound_marzban') !== false and $text != '✔ اتمام و ثبت') {
         $code = explode('-', $user['step'])[1];
         $rand_code = rand(111111, 999999);
-        $res = $sql->query("INSERT INTO `marzban_inbounds` (`panel`, `inbound`, `code`, `status`) VALUES ('$code', '$text', '$rand_code', 'active')");
-        sendMessage($from_id, "✅ اینباند ارسالی شما با موفقیت تنظیم شد.\n\n#️⃣ در صورت ارسال اینباند جدید آن را ارسال کنید و در غیر این صورت دستور /end_inbound را ارسال کنید یا روی دکمه زیر کلیک کنید.", $end_inbound);
+        $panel_fetch = $sql->query("SELECT * FROM `panels` WHERE `code` = '$code'")->fetch_assoc();
+        $token = loginPanel($panel_fetch['login_link'], $panel_fetch['username'], $panel_fetch['password'])['access_token'];
+        $inbounds = inbounds($token, $panel_fetch['login_link']);
+        $status = checkInbound(json_encode($inbounds), $text);
+        if ($status) {
+            $res = $sql->query("INSERT INTO `marzban_inbounds` (`panel`, `inbound`, `code`, `status`) VALUES ('$code', '$text', '$rand_code', 'active')");
+            sendMessage($from_id, "✅ اینباند ارسالی شما با موفقیت تنظیم شد.\n\n#️⃣ در صورت ارسال اینباند جدید آن را ارسال کنید و در غیر این صورت دستور /end_inbound را ارسال کنید یا روی دکمه زیر کلیک کنید.", $end_inbound);
+        } else {
+            sendMessage($from_id, "🔴 اینباند ارسالی شما یافت نشد !", $end_inbound);
+        }
     }
 
     elseif (($text == '✔ اتمام و ثبت' or $text == '/end_inbound') and strpos($user['step'], 'send_inbound_marzban') !== false) {

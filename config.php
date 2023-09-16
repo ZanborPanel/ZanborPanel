@@ -4,7 +4,7 @@ date_default_timezone_set('Asia/Tehran');
 error_reporting(E_ALL ^ E_NOTICE);
 
 $config = ['version' => '2.4', 'domain' => 'https://' . $_SERVER['HTTP_HOST'] . '/' . (strpos($_SERVER['SCRIPT_FILENAME'], 'public_html') !== false) ? explode('/', explode('public_html/', $_SERVER['SCRIPT_FILENAME'])[1])[0] : explode('/', explode('html/', $_SERVER['SCRIPT_FILENAME'])[1])[0]
-, 'token' => '[*TOKEN*]', 'dev' => '[*DEV*]', 'database' => ['db_name' => '[*DB-NAME*]', 'db_username' => '[*DB-USER*]', 'db_password' => '[*DB-PASS*]']];
+, 'token' => '6631290777:AAFpGVyIIvQBJsqCcVbhSJ9fiyBLtR9VU0g', 'dev' => '5068240372', 'database' => ['db_name' => 'ZanborPanel_HCmblU6WOG', 'db_username' => 'aiv7rie9', 'db_password' => 'HCmblU6WOG']];
 
 $sql = new mysqli('localhost', $config['database']['db_username'], $config['database']['db_password'], $config['database']['db_name']);
 $sql->set_charset("utf8mb4");
@@ -386,13 +386,17 @@ function loginPanel($address, $username, $password) {
     curl_close($curl);
 }
 
-function createService($username, $limit, $expire_data, $proxies, $token, $url) {
+function createService($username, $limit, $expire_data, $proxies, $inbounds, $token, $url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url . '/api/user');
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Authorization: Bearer ' .  $token, 'Content-Type: application/json'));
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array('proxies' => $proxies, 'expire' => $expire_data, 'data_limit' => $limit, 'username' => $username, 'data_limit_reset_strategy' => 'no_reset')));
+    if ($inbounds != 'null') {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array('proxies' => $proxies, 'inbounds' => $inbounds, 'expire' => $expire_data, 'data_limit' => $limit, 'username' => $username, 'data_limit_reset_strategy' => 'no_reset')));
+    } else {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array('proxies' => $proxies, 'expire' => $expire_data, 'data_limit' => $limit, 'username' => $username, 'data_limit_reset_strategy' => 'no_reset')));
+    }
     $response = curl_exec($ch);
     curl_close($ch);
     return $response;
@@ -453,6 +457,31 @@ function Modifyuser($username, $data, $token, $url) {
     $response = json_decode(curl_exec($ch), true);
     curl_close($ch);
     return $response;
+}
+
+function inbounds($token, $url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url . '/api/inbounds');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Authorization: Bearer ' . $token, 'Content-Type: application/json'));
+    $response = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+    return $response;
+}
+
+function checkInbound($inbounds, $inbound) {
+    $inbounds = json_decode($inbounds, true);
+    $found_inbound = false;
+    foreach ($inbounds as $protocol) {
+        foreach ($protocol as $item) {
+            if (strtoupper($item['tag']) == strtoupper($inbound)) {
+                $found_inbound = true;
+                break;
+            }
+        }
+    }
+    return $found_inbound ? true : false;
 }
 
 # ----------------- [ <- keyboard -> ] ----------------- #
