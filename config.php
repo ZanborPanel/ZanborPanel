@@ -574,7 +574,7 @@ $manage_server = json_encode(['keyboard' => [
 
 $select_panel = json_encode(['inline_keyboard' => [
     [['text' => '▫سنایی', 'callback_data' => 'sanayi']],
-    [['text' => '▫️هدیفای', 'callback_data' => 'hedifay'], ['text' => '▫️مرزبان', 'callback_data' => 'marzban']]
+    [['text' => '▫️هیدیفای', 'callback_data' => 'hedifay'], ['text' => '▫️مرزبان', 'callback_data' => 'marzban']]
 ]]);
 
 $add_plan_button = json_encode(['inline_keyboard' => [

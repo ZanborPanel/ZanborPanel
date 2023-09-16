@@ -1,10 +1,11 @@
 <?php
 
+# -- #
 /**
 * Project name: ZanborPanel
 * Channel: @ZanborPanel
 * Group: @ZanborPanelGap
-* Version: 2.5
+ * Version: 2.5
 **/
 
 include_once 'config.php';
@@ -1045,6 +1046,34 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     elseif  ($text == '➕ افزودن سرور') {
         step('add_server_select');
         sendMessage($from_id, "ℹ️ قصد اضافه کردن کدام یک از پنل های زیر را دارید ؟", $select_panel);
+    }
+
+    # ------------- hedifay ------------- #
+    elseif ($data == 'hedifay') {
+        step('add_server_hedifay');
+        deleteMessage($from_id, $message_id);
+        sendMessage($from_id, "‌👈🏻⁩ اسم پنل خود را به دلخواه ارسال کنید :↓\n\nمثال نام : 🇳🇱 - هلند\n• این اسم برای کاربران قابل نمایش است.", $cancel_add_server);
+    }
+
+    elseif ($user['step'] == 'add_server_hedifay') {
+        if ($sql->query("SELECT `name` FROM `panels` WHERE `name` = '$text'")->num_rows == 0) {
+            step('send_address_hedifay');
+            file_put_contents('add_panel.txt', "$text\n", FILE_APPEND);
+            sendMessage($from_id, "🌐 آدرس لاگین به پنل را ارسال کنید.\n\n- example:\n\n<code>https://1.1.1.1.sslip.io/8itQkDU30qCOwzUkK3LnMf58qfsw/175dbb13-95d7-3807-a987-gbs3434bd1b412/admin/</code>", $cancel_add_server);
+        } else {
+            sendMessage($from_id, "❌ پنلی با نام [ <b>$text</b> ] قبلا در ربات ثبت شده !", $cancel_add_server);
+        }
+    }
+
+    elseif ($user['step'] == 'send_address_hedifay') {
+        if (strlen($text) > 50) {
+            if (checkUrl($text) == 200) {
+                // $sql->query("INSERT INTO `hiddify_panels` (`name`, `login_link`, `token`, `code`, `status`, `type`) VALUES ()");
+                sendMessage($from_id, "✅ پنل هیدیفای  شما با موفقیت به ربات اضافه شد !", $manage_server);
+            }
+        } else {
+            sendMessage($from_id, "❌ آدرس ارسالی شما اشتباه است !", $cancel_add_server);
+        }
     }
 
     # ------------- sanayi ------------- #
@@ -2638,5 +2667,5 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
 * Project name: ZanborPanel
 * Channel: @ZanborPanel
 * Group: @ZanborPanelGap
-* Version: 2.5
+ * Version: 2.5
 **/
