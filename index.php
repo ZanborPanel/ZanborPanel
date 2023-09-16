@@ -1238,6 +1238,26 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         sendMessage($from_id, "✅ همه اینباند های ارسالی شما ثبت شد.", $manage_server);
     }
 
+    elseif (strpos($data, 'manage_marzban_inbound') !== false) {
+        $panel_code = explode('-', $data)[1];
+        $fetch_inbounds = $sql->query("SELECT * FROM `marzban_inbounds` WHERE `code` = '$panel_code'");
+        if ($fetch_inbounds->num_rows > 0) {
+            while ($row = $fetch_inbounds->fetch_assoc()) {
+                $key[] = [['text' => $row['inbound'], 'callback_data' => 'null'], ['text' => '🗑', 'callback_data' => 'delete_marzban_inbound-'.$row['code'].'-'.$panel_code]];
+            }
+            $key = json_encode(['inline_keyboard' => $key]);
+            editMessage($from_id, "🔎 لیست همه اینباند های ثبت شده برای این پنل نوسط شما به شرح زیر است !", $message_id, $key);
+        } else {
+            alert('❌ هیچ اینباندی برای این پنل تنظیم نشده است !', true);
+        }
+    }
+
+    elseif (strpos($data, 'delete_marzban_inbound') !== false) {
+        $panel_code = explode('-', $data)[2];
+        $inbound_code = explode('-', $data)[1];
+        sendMessage($from_id, "$panel_code || $inbound_code");
+    }
+
     elseif (strpos($data, 'set_inbound_sanayi') !== false) {
         $code = explode('-', $data)[1];
         step('send_inbound_id-'.$code);
