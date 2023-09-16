@@ -36,6 +36,18 @@ mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `panels` (
     `status` varchar(20) COLLATE utf8mb4_bin DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
 
+mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `hiddify_panels` (
+    `row` int(200) AUTO_INCREMENT PRIMARY KEY,
+    `name` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+    `login_link` TEXT COLLATE utf8mb4_bin NOT NULL,
+    `token` TEXT COLLATE utf8mb4_bin NOT NULL,
+    `count_create` varchar(50) COLLATE utf8mb4_bin DEFAULT '0',
+    `qr_code` varchar(30) COLLATE utf8mb4_bin DEFAULT 'active',
+    `code` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+    `type` varchar(30) COLLATE utf8mb4_bin NOT NULL,
+    `status` varchar(20) COLLATE utf8mb4_bin DEFAULT 'active'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
+
 mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `sanayi_panel_setting` (
     `code` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
     `inbound_id` varchar(10) COLLATE utf8mb4_bin DEFAULT NULL,

@@ -1059,16 +1059,20 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
         if ($sql->query("SELECT `name` FROM `panels` WHERE `name` = '$text'")->num_rows == 0) {
             step('send_address_hedifay');
             file_put_contents('add_panel.txt', "$text\n", FILE_APPEND);
-            sendMessage($from_id, "🌐 آدرس لاگین به پنل را ارسال کنید.\n\n- example:\n\n<code>https://1.1.1.1.sslip.io/8itQkDU30qCOwzUkK3LnMf58qfsw/175dbb13-95d7-3807-a987-gbs3434bd1b412/admin/</code>", $cancel_add_server);
+            sendMessage($from_id, "🌐 آدرس لاگین به پنل را ارسال کنید.\n\n- example:\n\n<code>https://1.1.1.1.sslip.io/8itQkDU30qCOwzUkK3LnMf58qfsw/175dbb13-95d7-3807-a987-gbs3434bd1b412/admin</code>", $cancel_add_server);
         } else {
             sendMessage($from_id, "❌ پنلی با نام [ <b>$text</b> ] قبلا در ربات ثبت شده !", $cancel_add_server);
         }
     }
 
     elseif ($user['step'] == 'send_address_hedifay') {
-        if (strlen($text) > 50) {
+        if (strlen($text) > 50 and substr($text, -1) != '/') {
             if (checkUrl($text) == 200) {
-                // $sql->query("INSERT INTO `hiddify_panels` (`name`, `login_link`, `token`, `code`, `status`, `type`) VALUES ()");
+                $info = explode("\n", file_get_contents('add_panel.txt'));
+                preg_match('#https:\/\/.*?\/(.*)\/admin#', $text, $matches);
+                $token = $matches[1];
+                $code = rand(111111, 999999);
+                $sql->query("INSERT INTO `hiddify_panels` (`name`, `login_link`, `token`, `code`, `status`, `type`) VALUES ('{$info[0]}', '$text', '$token', '$code', 'active', 'hiddify')");
                 sendMessage($from_id, "✅ پنل هیدیفای  شما با موفقیت به ربات اضافه شد !", $manage_server);
             }
         } else {
