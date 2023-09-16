@@ -1229,7 +1229,8 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     elseif (strpos($user['step'], 'send_inbound_marzban') !== false and $text != '✔ اتمام و ثبت') {
         $code = explode('-', $user['step'])[1];
         $rand_code = rand(111111, 999999);
-        $sql->query("INSERT INTO `marzban_inbounds` (`panel`, `inbound`, `code`, `status`) VALUES ('$code', '$text', '$rand_code', 'active')");
+        $res = $sql->query("INSERT INTO `marzban_inbounds` (`panel`, `inbound`, `code`, `status`) VALUES ('$code', '$text', '$rand_code', 'active')");
+        sendMessage($from_id, $res);
         sendMessage($from_id, "✅ اینباند ارسالی شما با موفقیت تنظیم شد.\n\n#️⃣ در صورت ارسال اینباند جدید آن را ارسال کنید و در غیر این صورت دستور /end_inbound را ارسال کنید یا روی دکمه زیر کلیک کنید.", $end_inbound);
     }
 
