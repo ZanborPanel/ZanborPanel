@@ -3,7 +3,7 @@
 date_default_timezone_set('Asia/Tehran');
 error_reporting(E_ALL ^ E_NOTICE);
 
-$config = ['version' => '2.5', 'domain' => 'https://' . $_SERVER['HTTP_HOST'] . '/' . explode('/', explode('html/', $_SERVER['SCRIPT_FILENAME'])[1])[0], 'token' => '6631290777:AAFpGVyIIvQBJsqCcVbhSJ9fiyBLtR9VU0g', 'dev' => '5068240372', 'database' => ['db_name' => 'ZanborPanel_HCmblU6WOG', 'db_username' => 'aiv7rie9', 'db_password' => 'HCmblU6WOG']];
+$config = ['version' => '2.4', 'domain' => 'https://' . $_SERVER['HTTP_HOST'] . '/' . explode('/', explode('html/', $_SERVER['SCRIPT_FILENAME'])[1])[0], 'token' => '[*TOKEN*]', 'dev' => '[*DEV*]', 'database' => ['db_name' => '[*DB-NAME*]', 'db_username' => '[*DB-USER*]', 'db_password' => '[*DB-PASS*]']];
 
 $sql = new mysqli('localhost', $config['database']['db_username'], $config['database']['db_password'], $config['database']['db_name']);
 $sql->set_charset("utf8mb4");
