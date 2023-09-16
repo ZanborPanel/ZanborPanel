@@ -783,11 +783,65 @@ if ($from_id == $config['dev'] or in_array($from_id, $admins)) {
     }
     
     // ----------- manage auth ----------- //
-    elseif ($text == '🔑 سیستم احراز هویت') {
-        sendMessage($from_id, "🀄️ به بخش سیستم احراز هویت ربات خوش آمدید !\n\n📚 راهنمای این بخش :↓\n\n✅ : فعال \n❌ : غیرفعال", $manage_auth);
+    elseif ($text == '🔑 سیستم احراز هویت' or $data == 'manage_auth') {
+        if (isset($text)) {
+            sendMessage($from_id, "🀄️ به بخش سیستم احراز هویت ربات خوش آمدید !\n\n📚 راهنمای این بخش :↓\n\n🟢 : فعال \n🔴 : غیرفعال", $manage_auth);
+        } else {
+            editMessage($from_id, "🀄️ به بخش سیستم احراز هویت ربات خوش آمدید !\n\n📚 راهنمای این بخش :↓\n\n🟢 : فعال \n🔴 : غیرفعال", $message_id, $manage_auth);
+        }
     }
 
+    elseif ($data == 'change_status_auth') {
+        if ($auth_setting['status'] == 'active') {
+            $sql->query("UPDATE `auth_setting` SET `status` = 'inactive'");
+        } else {
+            $sql->query("UPDATE `auth_setting` SET `status` = 'active'");
+        }
+        alert('✅ تغییرات با موفقیت انجام شد.', true);
+        editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
+    }
 
+    elseif ($data == 'change_status_auth_iran') {
+        if ($auth_setting['virtual_number'] == 'inactive' and $auth_setting['both_number'] == 'inactive') {
+            if ($auth_setting['iran_number'] == 'active') {
+                $sql->query("UPDATE `auth_setting` SET `iran_number` = 'inactive'");
+            } else {
+                $sql->query("UPDATE `auth_setting` SET `iran_number` = 'active'");
+            }
+            alert('✅ تغییرات با موفقیت انجام شد.', true);
+            editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
+        } else {
+            alert('⚠️ برای فعال کردن سیستم احراز هویت شماره های ایرانی باید بخش ( 🏴󠁧󠁢󠁥󠁮󠁧󠁿 شماره مجازی ) و ( 🌎 همه شماره ها ) غیرفعال شود !', true);
+        }
+    }
+
+    elseif ($data == 'change_status_auth_virtual') {
+        if ($auth_setting['iran_number'] == 'inactive' and $auth_setting['both_number'] == 'inactive') {
+            if ($auth_setting['virtual_number'] == 'active') {
+                $sql->query("UPDATE `auth_setting` SET `virtual_number` = 'inactive'");
+            } else {
+                $sql->query("UPDATE `auth_setting` SET `virtual_number` = 'active'");
+            }
+            alert('✅ تغییرات با موفقیت انجام شد.', true);
+            editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
+        } else {
+            alert('⚠️ برای فعال کردن سیستم احراز هویت شماره های مجازی باید بخش ( 🇮🇷 شماره ایران ) و ( 🌎 همه شماره ها ) غیرفعال شود !', true);
+        }
+    }
+
+    elseif ($data == 'change_status_auth_all_country') {
+        if ($auth_setting['iran_number'] == 'inactive' and $auth_setting['virtual_number'] == 'inactive') {
+            if ($auth_setting['both_number'] == 'active') {
+                $sql->query("UPDATE `auth_setting` SET `both_number` = 'inactive'");
+            } else {
+                $sql->query("UPDATE `auth_setting` SET `both_number` = 'active'");
+            }
+            alert('✅ تغییرات با موفقیت انجام شد.', true);
+            editMessage($from_id, "🆙 برای آپدیت تغییرات بر روی دکمه زیر کلیک کنید !", $message_id, json_encode(['inline_keyboard' => [[['text' => '🔎 آپدیت تغییرات', 'callback_data' => 'manage_auth']]]]));
+        } else {
+            alert('⚠️ برای فعال کردن سیستم احراز هویت همه شماره ها باید بخش ( 🇮🇷 شماره ایران ) و ( 🏴󠁧󠁢󠁥󠁮󠁧󠁿 شماره مجازی ) غیرفعال شود !', true);
+        }
+    }
     // ----------- manage status ----------- //
     elseif($text == '👤 آمار ربات'){
         $state1 = $sql->query("SELECT `status` FROM `users`")->num_rows;

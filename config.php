@@ -48,11 +48,13 @@ if (!isset($sql->connect_error)) {
             $test_account = $sql->query("SELECT * FROM `test_account_setting`");
             $payment_setting = $sql->query("SELECT * FROM `payment_setting`");
             $spam_setting = $sql->query("SELECT * FROM `spam_setting`");
+            $auth_setting = $sql->query("SELECT * FROM `auth_setting`");
             $settings = $sql->query("SELECT * FROM `settings`");
             # ------------------------------------------------- #
             $test_account_setting = $test_account->fetch_assoc();
             $payment_setting = $payment_setting->fetch_assoc();
             $spam_setting = $spam_setting->fetch_assoc();
+            $auth_setting = $auth_setting->fetch_assoc();
             $settings = $settings->fetch_assoc();
             $user = $user->fetch_assoc();
         }
@@ -591,6 +593,13 @@ $manage_test_account = json_encode(['inline_keyboard' => [
     [['text' => $sql->query("SELECT * FROM `test_account`")->num_rows, 'callback_data' => 'null'], ['text' => '▫️تعداد اکانت تست :', 'callback_data' => 'null']],
     [['text' => $test_account_setting['volume'] . ' GB', 'callback_data' => 'change_test_account_volume'], ['text' => '▫️حجم :', 'callback_data' => 'null']],
     [['text' => $test_account_setting['time'] . ' ساعت', 'callback_data' => 'change_test_account_time'], ['text' => '▫️زمان :', 'callback_data' => 'null']],
+]]);
+
+$manage_auth = json_encode(['inline_keyboard' => [
+    [['text' => ($auth_setting['status'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_auth'], ['text' => 'ℹ️ سیستم احرازهویت :', 'callback_data' => 'null']],
+    [['text' => ($auth_setting['iran_number'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_auth_iran'], ['text' => '🇮🇷 شماره ایران :', 'callback_data' => 'null']],
+    [['text' => ($auth_setting['virtual_number'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_auth_virtual'], ['text' => '🏴󠁧󠁢󠁥󠁮󠁧󠁿 شماره مجازی :', 'callback_data' => 'null']],
+    [['text' => ($auth_setting['both_number'] == 'active') ? '🟢' : '🔴', 'callback_data' => 'change_status_auth_all_country'], ['text' => '🌎 همه شماره ها :', 'callback_data' => 'null']],
 ]]);
 
 $manage_service = json_encode(['keyboard' => [

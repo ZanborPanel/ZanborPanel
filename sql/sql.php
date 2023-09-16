@@ -186,7 +186,14 @@ mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `notes` (
     `status` varchar(20) COLLATE utf8mb4_bin DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
 
-// if ($sql->query("SELECT * FROM `sanayi_settings`")->num_rows == 0) $sql->query("INSERT INTO `sanayi_settings` (`inbound_id`, `example_link`, `flow`) VALUES ('none', 'none', 'offflow')");
+mysqli_multi_query($sql, "CREATE TABLE IF NOT EXISTS `auth_setting` (
+    `iran_number` varchar(15) COLLATE utf8mb4_bin DEFAULT NULL,
+    `virtual_number` varchar(15) COLLATE utf8mb4_bin DEFAULT NULL,
+    `both_number` varchar(15) COLLATE utf8mb4_bin DEFAULT NULL,
+    `status` varchar(15) COLLATE utf8mb4_bin DEFAULT 'inactive'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
+
+if ($sql->query("SELECT * FROM `auth_setting`")->num_rows == 0) $sql->query("INSERT INTO `auth_setting` (`iran_number`, `virtual_number`, `both_number`) VALUES ('inactive', 'inactive', 'inactive')");
 if ($sql->query("SELECT * FROM `settings`")->num_rows == 0) $sql->query("INSERT INTO `settings` (`count_warn_ban`) VALUES ('3')");
 if ($sql->query("SELECT * FROM `spam_setting`")->num_rows == 0) $sql->query("INSERT INTO `spam_setting` (`type`) VALUES ('ban')");
 if ($sql->query("SELECT * FROM `test_account_setting`")->num_rows == 0) $sql->query("INSERT INTO `test_account_setting` (`panel`) VALUES ('none')");
@@ -194,7 +201,7 @@ if ($sql->query("SELECT * FROM `sends` WHERE `send` = 'no'")->num_rows == 0) $sq
 if ($sql->query("SELECT * FROM `payment_setting`")->num_rows == 0) $sql->query("INSERT INTO `payment_setting` (`zarinpal_token`, `idpay_token`, `nowpayment_token`) VALUES ('none', 'none', 'none')");
 
 if ($sql->connect_error) {
-	echo json_encode(['status' => false, 'msg' => 'Database operation failed --> : ' . $sql->connect_error, 'status_code' => 401], 448);
+	echo json_encode(['status' => false, 'msg' => '❌ The connection with the database encountered an error : ' . $sql->connect_error, 'status_code' => 401], 448);
 } else {
-    echo json_encode(['status' => true, 'msg' => 'The database operation was completed successfully.', 'status_code' => 200], 448);
+    echo json_encode(['status' => true, 'msg' => '✅ The database operation was completed successfully.', 'status_code' => 200], 448);
 }
