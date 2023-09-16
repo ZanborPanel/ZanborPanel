@@ -82,6 +82,8 @@ do
                             sleep 2
                             
                             curl --location "https://${domain}/ZanborPanelBot/sql/sql.php?db_password=${db_password}&db_name=${db_name}&db_username=${db_username}"
+                            database_reponse=$(curl -s --location "https://${domain}/ZanborPanelBot/sql/sql.php?db_password=${db_password}&db_name=${db_name}&db_username=${db_username}" | grep "^{" | jq '.status')
+                            echo "    -> ${database_reponse}"
                             echo -e "\n"
                             TEXT_MESSAGE="🔄 The ZanborPanel Bot Has Been Successfully Updated -> @ZanborPanel | @ZanborPanelGap"
                             TEXT_MESSAGE2="✅ ربات شما با موفقیت به آخرین نسخه آپدیت شد."$'\n\n'"#️⃣ اطلاعات ربات :"$'\n\n'"▫️token: ${token}"$'\n'"▫️admin: ${dev} "$'\n'"▫️domain: ${domain}"$'\n'"▫️db_name: ${db_name}"$'\n'"▫️db_username: ${db_username}"$'\n'"▫️db_password: ${db_password}"$'\n\n'"🔎 - @ZanborPanel | @ZanborPanelGap"
