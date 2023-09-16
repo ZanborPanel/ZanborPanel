@@ -168,7 +168,7 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
         # ---------------- set proxies and inbounds proccess for marzban panel ---------------- #
         $protocols = explode('|', $panel['protocols']);
         unset($protocols[count($protocols)-1]);
-        unset($protocols[0]);
+        if ($protocols[0] == '') unset($protocols[0]);
         $proxies = array();
         foreach ($protocols as $protocol) {
             if ($protocol == 'vless' and $panel['flow'] == 'flowon'){
@@ -259,9 +259,10 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
         
         try {
             if ($panel_fetch['type'] == 'marzban') {
-                # ------------ set proxies proccess ------------ #
+                # ---------------- set proxies and inbounds proccess for marzban panel ---------------- #
                 $protocols = explode('|', $panel_fetch['protocols']);
                 unset($protocols[count($protocols)-1]);
+                if ($protocols[0] == '') unset($protocols[0]);
                 $proxies = array();
                 foreach ($protocols as $protocol) {
                     if ($protocol == 'vless' and $panel_fetch['flow'] == 'flowon'){
@@ -270,10 +271,18 @@ elseif ($text == '🎁 سرویس تستی (رایگان)' and $test_account_set
                         $proxies[$protocol] = array();
                     }
                 }
+                
+                $panel_inbounds = $sql->query("SELECT * FROM `marzban_inbounds` WHERE `panel` = '{$panel_fetch['code']}'");
+                $inbounds = array();
+                foreach ($protocols as $protocol) {
+                    while ($row = $panel_inbounds->fetch_assoc()) {
+                        $inbounds[$protocol][] = $row['inbound'];
+                    }
+                }
                 # ---------------------------------------------- #
                 $code = rand(111111, 999999);
                 $name = base64_encode($code) . '_' . $from_id;
-                $create_service = createService($name, convertToBytes($test_account_setting['volume'].'GB'), strtotime("+ {$test_account_setting['time']} hour"), $proxies, $panel_fetch['token'], $panel_fetch['login_link']);
+                $create_service = createService($name, convertToBytes($test_account_setting['volume'].'GB'), strtotime("+ {$test_account_setting['time']} hour"), $proxies, ($panel_inbounds->num_rows > 0) ? $inbounds : 'null', $panel_fetch['token'], $panel_fetch['login_link']);
                 $create_status = json_decode($create_service, true);
                 if (isset($create_status['username'])) {
                     $links = "";
@@ -683,7 +692,7 @@ elseif ($data == 'nowpayment' and strpos($user['step'], 'sdp-') !== false) {
         if ($payment_setting[$data . '_status'] == 'active') {
             $code = rand(111111, 999999);
             $price = explode('-', $user['step'])[1];
-            $dollar = intval(str_replace(',', '', json_decode(file_get_contents($config['domain'] . '/api/arz.php'), true)['p-toman']));
+            $dollar = json_decode(file_get_contents($config['domain'] . '/api/arz.php'), true)['price'];
             $response_gen = nowPaymentGenerator((intval($price) / intval($dollar)), 'usd', 'trx', $code);
             if (!is_null($response_gen)) {
                 $response = json_decode($response_gen, true);
