@@ -363,7 +363,7 @@ elseif (strpos($data, 'service_status-') !== false) {
             $note = $sql->query("SELECT * FROM `notes` WHERE `code` = '$code'");
 
             $manage_service_btns = json_encode(['inline_keyboard' => [    
-                [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code.'-marzban']],
+                // [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code.'-marzban']],
                 [['text' => 'خرید حجم اضافه', 'callback_data' => 'buy_extra_volume-'.$code.'-marzban'], ['text' => 'افزایش اعتبار زمانی', 'callback_data' => 'buy_extra_time-'.$code.'-marzban']],
                 [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code.'-marzban'], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code.'-marzban']],
                 [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
@@ -393,7 +393,7 @@ elseif (strpos($data, 'service_status-') !== false) {
             $link = $order['link'];
 
             $manage_service_btns = json_encode(['inline_keyboard' => [    
-                [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code.'-sanayi']],
+                // [['text' => 'تنظیمات دسترسی', 'callback_data' => 'access_settings-'.$code.'-sanayi']],
                 [['text' => 'خرید حجم اضافه', 'callback_data' => 'buy_extra_volume-'.$code.'-sanayi'], ['text' => 'افزایش اعتبار زمانی', 'callback_data' => 'buy_extra_time-'.$code.'-sanayi']],
                 [['text' => 'نوشتن یادداشت', 'callback_data' => 'write_note-'.$code.'-sanayi'], ['text' => 'دریافت QrCode', 'callback_data' => 'getQrCode-'.$code.'-sanayi']],
                 [['text' => '🔙 بازگشت', 'callback_data' => 'back_services']]
