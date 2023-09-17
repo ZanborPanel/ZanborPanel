@@ -56,7 +56,7 @@ do
                             sudo apt update && apt upgrade -y
                             colorized_echo green "The server was successfully updated . . .\n"
                             sudo apt install curl -y
-                            sudo apt-get install jq
+                            sudo apt install jq -y
                             sleep 2
                             mv /var/www/html/ZanborPanelBot/install/zanbor.install /var/www/html/zanbor.install
                             sleep 1
