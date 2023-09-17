@@ -10,24 +10,17 @@ function convertPersianToEnglish($string) {
 }
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'https://arzdigital.com/coins');
+curl_setopt($ch, CURLOPT_URL, 'https://api.bitpin.ir/v1/mkt/currencies/');
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36");
-$response = curl_exec($ch);
+$response = json_decode(curl_exec($ch), true)['results'];
 curl_close($ch);
 
-preg_match_all('#pulser-change="(.*?)">(.*?)</span>#', $response, $dollar1);
-$dollar = $dollar1[2];
-$rep = str_replace(['$'], [''], $dollar);
-preg_match_all('#<span class="(.*?)">(.*?)</span><span class="arz-toman arz-value-unit">#', $response, $toman1);
-$toman = $toman1[2];
-
-for ($i=0;$i<=count($dollar)-1;$i++) {
-    $value = ['p-toman' => convertPersianToEnglish($toman[$i]), 'p-dolar'=> $rep[$i]];
-    $arz[] = $value;
+foreach ($response as $item) {
+    if ($item['title'] == 'Tether') {
+        exit(json_encode(['status' => true, 'price' => $item['price_info']['price']], true));
+    }
 }
-
-echo json_encode($arz[23], 448);
 
 ?>
