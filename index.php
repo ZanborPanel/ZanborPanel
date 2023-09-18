@@ -177,8 +177,6 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
                 $proxies[$protocol] = array();
             }
         }
-        sendMessage($from_id, json_encode($protocols, 448));
-        sendMessage($from_id, json_encode($proxies, 448));
         $panel_inbounds = $sql->query("SELECT * FROM `marzban_inbounds` WHERE `panel` = '{$panel['code']}'");
         $inbounds = array();
         foreach ($protocols as $protocol) {
@@ -186,7 +184,6 @@ elseif($user['step'] == 'confirm_service' and $text == '☑️ ایجاد سرو
                 $inbounds[$protocol][] = $row['inbound'];
             }
         }
-        sendMessage($from_id, json_encode($inbounds, 448));
         # ---------------- create service ---------------- #
         $token = loginPanel($panel['login_link'], $panel['username'], $panel['password'])['access_token'];
         $create_service = createService($name, convertToBytes($limit.'GB'), strtotime("+ $date day"), $proxies, ($panel_inbounds->num_rows > 0) ? $inbounds : 'null', $token, $panel['login_link']);
