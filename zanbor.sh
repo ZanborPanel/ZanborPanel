@@ -70,10 +70,10 @@ for i in "${PACKAGES[@]}"
     done
 
 # install more !
-echo 'phpmyadmin phpmyadmin/app-password-confirm password zanborhipass' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/app-password-confirm password zanborpanel' | debconf-set-selections
 echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
-echo 'phpmyadmin phpmyadmin/mysql/admin-pass password zanborhipass' | debconf-set-selections
-echo 'phpmyadmin phpmyadmin/mysql/app-pass password zanborhipass' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/mysql/admin-pass password zanborpanel' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/mysql/app-pass password zanborpanel' | debconf-set-selections
 echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-selections
 sudo apt-get install phpmyadmin -y
 sudo ln -s /etc/phpmyadmin/apache.conf /etc/apache2/conf-available/phpmyadmin.conf
